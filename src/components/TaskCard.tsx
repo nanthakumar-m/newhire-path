@@ -39,7 +39,7 @@ export const TaskCard = ({ task, isCompleted, onToggleComplete }: TaskCardProps)
   return (
     <Card className={`transition-all duration-200 hover:shadow-md ${
       isCompleted 
-        ? "bg-success/5 border-success/30" 
+        ? "bg-success/10 border-success/50" 
         : "hover:border-primary/30"
     }`}>
       <CardHeader className="pb-3">
@@ -51,7 +51,7 @@ export const TaskCard = ({ task, isCompleted, onToggleComplete }: TaskCardProps)
           />
           <div className="flex-1 space-y-2">
             <CardTitle className={`text-sm leading-snug ${
-              isCompleted ? "text-muted-foreground line-through" : ""
+              isCompleted ? "text-success/80" : ""
             }`}>
               {task.title}
             </CardTitle>
@@ -69,7 +69,7 @@ export const TaskCard = ({ task, isCompleted, onToggleComplete }: TaskCardProps)
       </CardHeader>
       <CardContent className="pt-0">
         <p className={`text-sm mb-3 ${
-          isCompleted ? "text-muted-foreground line-through" : "text-foreground/80"
+          isCompleted ? "text-success/70" : "text-foreground/80"
         }`}>
           {task.description}
         </p>

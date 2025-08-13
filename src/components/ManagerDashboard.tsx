@@ -1,6 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { EmployeeTable } from "./EmployeeTable";
+import { useState } from "react";
 import { 
   Users, 
   UserCheck, 
@@ -13,7 +16,8 @@ import {
   Heart,
   Code,
   TrendingUp,
-  AlertCircle
+  AlertCircle,
+  ArrowLeft
 } from "lucide-react";
 
 const employeeStats = {
@@ -114,6 +118,8 @@ const recentActivity = [
 ];
 
 export const ManagerDashboard = () => {
+  const [selectedTask, setSelectedTask] = useState<{ id: number; title: string } | null>(null);
+  
   const overallCompletion = Math.round(
     (taskStats.reduce((sum, task) => sum + task.completed, 0) / 
      (taskStats.length * employeeStats.total)) * 100
@@ -136,6 +142,25 @@ export const ManagerDashboard = () => {
       default: return "bg-muted/50 border-border";
     }
   };
+
+  if (selectedTask) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="outline" 
+            onClick={() => setSelectedTask(null)}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Dashboard
+          </Button>
+          <h2 className="text-2xl font-bold">Task Details</h2>
+        </div>
+        <EmployeeTable taskTitle={selectedTask.title} taskId={selectedTask.id} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -227,7 +252,11 @@ export const ManagerDashboard = () => {
             const completionRate = Math.round((task.completed / task.total) * 100);
             
             return (
-              <Card key={task.id} className={`${getPriorityBg(task.priority)}`}>
+              <Card 
+                key={task.id} 
+                className={`${getPriorityBg(task.priority)} cursor-pointer hover:shadow-md transition-all duration-200`}
+                onClick={() => setSelectedTask({ id: task.id, title: task.title })}
+              >
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium flex items-center gap-2">
                     <IconComponent className={`h-4 w-4 ${getPriorityColor(task.priority)}`} />
