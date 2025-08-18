@@ -3,7 +3,10 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmployeeTable } from "./EmployeeTable";
-import { useState } from "react";
+import { AddEmployeeForm } from "./AddEmployeeForm";
+import { EmployeeListTable } from "./EmployeeListTable";
+import { useState, useEffect } from "react";
+import { Employee } from "@/types/auth";
 import { 
   Users, 
   UserCheck, 
@@ -20,12 +23,7 @@ import {
   ArrowLeft
 } from "lucide-react";
 
-const employeeStats = {
-  total: 24,
-  onboarded: 18,
-  inProgress: 4,
-  notStarted: 2,
-};
+// This will be calculated from localStorage
 
 const taskStats = [
   {
@@ -119,11 +117,45 @@ const recentActivity = [
 
 export const ManagerDashboard = () => {
   const [selectedTask, setSelectedTask] = useState<{ id: number; title: string } | null>(null);
-  
-  const overallCompletion = Math.round(
-    (taskStats.reduce((sum, task) => sum + task.completed, 0) / 
-     (taskStats.length * employeeStats.total)) * 100
-  );
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [employeeStats, setEmployeeStats] = useState({
+    total: 0,
+    onboarded: 0,
+    inProgress: 0,
+    notStarted: 0,
+  });
+
+  useEffect(() => {
+    loadEmployees();
+  }, []);
+
+  const loadEmployees = () => {
+    const storedEmployees = JSON.parse(localStorage.getItem('employees') || '[]');
+    setEmployees(storedEmployees);
+    
+    // Calculate stats
+    const total = storedEmployees.length;
+    const onboarded = storedEmployees.filter((emp: Employee) => emp.completedTasks.length === 10).length;
+    const inProgress = storedEmployees.filter((emp: Employee) => emp.completedTasks.length > 0 && emp.completedTasks.length < 10).length;
+    const notStarted = storedEmployees.filter((emp: Employee) => emp.completedTasks.length === 0).length;
+
+    setEmployeeStats({ total, onboarded, inProgress, notStarted });
+  };
+
+  // Update task stats based on real employee data
+  const getUpdatedTaskStats = () => {
+    return taskStats.map(task => ({
+      ...task,
+      completed: employees.filter(emp => emp.completedTasks.includes(task.id)).length,
+      total: employees.length
+    }));
+  };
+
+  const updatedTaskStats = getUpdatedTaskStats();
+  const overallCompletion = employees.length > 0 ? Math.round(
+    (updatedTaskStats.reduce((sum, task) => sum + task.completed, 0) / 
+     (updatedTaskStats.length * employees.length)) * 100
+  ) : 0;
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -172,8 +204,17 @@ export const ManagerDashboard = () => {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">{employeeStats.total}</div>
-            <p className="text-xs text-muted-foreground">Active in onboarding</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold text-foreground">{employeeStats.total}</div>
+                <p className="text-xs text-muted-foreground">Active in onboarding</p>
+              </div>
+              <EmployeeListTable 
+                title="All Employees" 
+                employees={employees} 
+                type="total" 
+              />
+            </div>
           </CardContent>
         </Card>
 
@@ -183,8 +224,17 @@ export const ManagerDashboard = () => {
             <UserCheck className="h-4 w-4 text-success" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-success">{employeeStats.onboarded}</div>
-            <p className="text-xs text-muted-foreground">Completed all tasks</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold text-success">{employeeStats.onboarded}</div>
+                <p className="text-xs text-muted-foreground">Completed all tasks</p>
+              </div>
+              <EmployeeListTable 
+                title="Fully Onboarded Employees" 
+                employees={employees.filter(emp => emp.completedTasks.length === 10)} 
+                type="onboarded" 
+              />
+            </div>
           </CardContent>
         </Card>
 
@@ -194,8 +244,17 @@ export const ManagerDashboard = () => {
             <Clock className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-warning">{employeeStats.inProgress}</div>
-            <p className="text-xs text-muted-foreground">Active onboarding</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold text-warning">{employeeStats.inProgress}</div>
+                <p className="text-xs text-muted-foreground">Active onboarding</p>
+              </div>
+              <EmployeeListTable 
+                title="In Progress Employees" 
+                employees={employees.filter(emp => emp.completedTasks.length > 0 && emp.completedTasks.length < 10)} 
+                type="in-progress" 
+              />
+            </div>
           </CardContent>
         </Card>
 
@@ -205,8 +264,17 @@ export const ManagerDashboard = () => {
             <AlertCircle className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-destructive">{employeeStats.notStarted}</div>
-            <p className="text-xs text-muted-foreground">Needs attention</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold text-destructive">{employeeStats.notStarted}</div>
+                <p className="text-xs text-muted-foreground">Needs attention</p>
+              </div>
+              <EmployeeListTable 
+                title="Not Started Employees" 
+                employees={employees.filter(emp => emp.completedTasks.length === 0)} 
+                type="not-started" 
+              />
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -243,13 +311,28 @@ export const ManagerDashboard = () => {
         </CardContent>
       </Card>
 
+      {/* Add Employee Section */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Employee Management</CardTitle>
+            <AddEmployeeForm onEmployeeAdded={loadEmployees} />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground">
+            Add new employees to the onboarding system. They will receive login credentials with their name as both username and password.
+          </p>
+        </CardContent>
+      </Card>
+
       {/* Task Completion Grid */}
       <div>
         <h3 className="text-xl font-semibold mb-6">Task Completion Overview</h3>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-          {taskStats.map((task) => {
+          {updatedTaskStats.map((task) => {
             const IconComponent = task.icon;
-            const completionRate = Math.round((task.completed / task.total) * 100);
+            const completionRate = employees.length > 0 ? Math.round((task.completed / task.total) * 100) : 0;
             
             return (
               <Card 

@@ -1,87 +1,17 @@
+import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle } from "lucide-react";
-
-interface Employee {
-  id: string;
-  name: string;
-  employeeId: string;
-  domain: string;
-  managerName: string;
-  completedTasks: number[];
-}
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CheckCircle, XCircle, Filter } from "lucide-react";
+import { Employee } from "@/types/auth";
 
 interface EmployeeTableProps {
   taskTitle: string;
   taskId: number;
 }
 
-const employeeData: Employee[] = [
-  {
-    id: "1",
-    name: "Sarah Johnson",
-    employeeId: "EMP001",
-    domain: "Engineering",
-    managerName: "John Smith",
-    completedTasks: [1, 2, 3, 4, 5, 6, 7]
-  },
-  {
-    id: "2",
-    name: "Mike Chen",
-    employeeId: "EMP002",
-    domain: "Engineering",
-    managerName: "John Smith",
-    completedTasks: [1, 2, 3, 4, 5, 8]
-  },
-  {
-    id: "3",
-    name: "Emma Davis",
-    employeeId: "EMP003",
-    domain: "Marketing",
-    managerName: "Lisa Wong",
-    completedTasks: [1, 2, 4, 5, 6, 7, 8, 9]
-  },
-  {
-    id: "4",
-    name: "Alex Rodriguez",
-    employeeId: "EMP004",
-    domain: "Sales",
-    managerName: "Mark Taylor",
-    completedTasks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  },
-  {
-    id: "5",
-    name: "Jessica Liu",
-    employeeId: "EMP005",
-    domain: "HR",
-    managerName: "Karen Brown",
-    completedTasks: [1, 2, 3, 5]
-  },
-  {
-    id: "6",
-    name: "David Park",
-    employeeId: "EMP006",
-    domain: "Engineering",
-    managerName: "John Smith",
-    completedTasks: [1, 3, 4, 6, 7]
-  },
-  {
-    id: "7",
-    name: "Maria Garcia",
-    employeeId: "EMP007",
-    domain: "Finance",
-    managerName: "Robert Kim",
-    completedTasks: [1, 2, 3, 4, 5, 6, 7, 8]
-  },
-  {
-    id: "8",
-    name: "James Wilson",
-    employeeId: "EMP008",
-    domain: "Marketing",
-    managerName: "Lisa Wong",
-    completedTasks: [1, 2, 4, 5, 9]
-  }
-];
+// Employee data will be loaded from localStorage
 
 const taskNames = [
   "Safety Course",
@@ -97,37 +27,67 @@ const taskNames = [
 ];
 
 export const EmployeeTable = ({ taskTitle, taskId }: EmployeeTableProps) => {
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [filter, setFilter] = useState<'all' | 'completed' | 'pending'>('all');
+
+  useEffect(() => {
+    const storedEmployees = JSON.parse(localStorage.getItem('employees') || '[]');
+    setEmployees(storedEmployees);
+  }, []);
+
   const getOverallCompletion = (completedTasks: number[]) => {
     return Math.round((completedTasks.length / 10) * 100);
   };
 
   const getTaskStatus = (employeeCompletedTasks: number[], taskIndex: number) => {
-    return employeeCompletedTasks.includes(taskIndex + 1);
+    return employeeCompletedTasks.includes(taskIndex);
   };
+
+  const filteredEmployees = employees.filter(employee => {
+    if (filter === 'completed') {
+      return getTaskStatus(employee.completedTasks, taskId);
+    } else if (filter === 'pending') {
+      return !getTaskStatus(employee.completedTasks, taskId);
+    }
+    return true;
+  });
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Employee Status for: {taskTitle}</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold">Employee Status for: {taskTitle}</h3>
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-muted-foreground" />
+          <Select value={filter} onValueChange={(value: 'all' | 'completed' | 'pending') => setFilter(value)}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      
       <div className="border rounded-lg">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Employee ID</TableHead>
-              <TableHead>Domain</TableHead>
-              <TableHead>Manager</TableHead>
+              <TableHead>Department</TableHead>
               <TableHead>Overall Progress</TableHead>
               <TableHead>Task Status</TableHead>
-              <TableHead>All Tasks</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {employeeData.map((employee) => (
+            {filteredEmployees.map((employee) => (
               <TableRow key={employee.id}>
                 <TableCell className="font-medium">{employee.name}</TableCell>
                 <TableCell>{employee.employeeId}</TableCell>
-                <TableCell>{employee.domain}</TableCell>
-                <TableCell>{employee.managerName}</TableCell>
+                <TableCell>{employee.department}</TableCell>
                 <TableCell>
                   <Badge variant="secondary">
                     {getOverallCompletion(employee.completedTasks)}%
@@ -135,7 +95,7 @@ export const EmployeeTable = ({ taskTitle, taskId }: EmployeeTableProps) => {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {getTaskStatus(employee.completedTasks, taskId - 1) ? (
+                    {getTaskStatus(employee.completedTasks, taskId) ? (
                       <div className="flex items-center gap-1 text-success">
                         <CheckCircle className="h-4 w-4" />
                         <span className="text-sm">Completed</span>
@@ -148,24 +108,17 @@ export const EmployeeTable = ({ taskTitle, taskId }: EmployeeTableProps) => {
                     )}
                   </div>
                 </TableCell>
-                <TableCell>
-                  <div className="flex flex-wrap gap-1">
-                    {taskNames.map((taskName, index) => (
-                      <Badge
-                        key={index}
-                        variant={getTaskStatus(employee.completedTasks, index) ? "default" : "outline"}
-                        className="text-xs"
-                      >
-                        {index + 1}
-                      </Badge>
-                    ))}
-                  </div>
-                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
+      
+      {filteredEmployees.length === 0 && (
+        <div className="text-center py-8 text-muted-foreground">
+          No employees found for the selected filter
+        </div>
+      )}
     </div>
   );
 };

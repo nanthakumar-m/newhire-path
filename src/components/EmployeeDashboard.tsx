@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TaskCard } from "@/components/TaskCard";
+import { FileUploadTask } from "@/components/FileUploadTask";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Clock, Star } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Employee } from "@/types/auth";
 
 const onboardingTasks = [
   {
@@ -12,6 +14,7 @@ const onboardingTasks = [
     description: "Complete the workplace safety and emergency procedures course",
     priority: "high" as const,
     estimatedTime: "45 min",
+    requiresUpload: true,
   },
   {
     id: 2,
@@ -54,6 +57,7 @@ const onboardingTasks = [
     description: "Complete cybersecurity awareness and compliance training",
     priority: "high" as const,
     estimatedTime: "35 min",
+    requiresUpload: true,
   },
   {
     id: 8,
@@ -79,16 +83,43 @@ const onboardingTasks = [
 ];
 
 export const EmployeeDashboard = () => {
+  const { user } = useAuth();
+  const currentEmployee = user as Employee;
   const [completedTasks, setCompletedTasks] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    if (currentEmployee?.completedTasks) {
+      setCompletedTasks(new Set(currentEmployee.completedTasks));
+    }
+  }, [currentEmployee]);
 
   const toggleTaskCompletion = (taskId: number) => {
     const newCompleted = new Set(completedTasks);
+    const task = onboardingTasks.find(t => t.id === taskId);
+    
+    // Don't allow manual completion for upload-required tasks
+    if (task?.requiresUpload) return;
+
     if (newCompleted.has(taskId)) {
       newCompleted.delete(taskId);
     } else {
       newCompleted.add(taskId);
     }
     setCompletedTasks(newCompleted);
+
+    // Update localStorage
+    const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+    const updatedEmployees = employees.map((emp: Employee) => {
+      if (emp.id === currentEmployee.id) {
+        return { ...emp, completedTasks: Array.from(newCompleted) };
+      }
+      return emp;
+    });
+    localStorage.setItem('employees', JSON.stringify(updatedEmployees));
+
+    // Update current user
+    const updatedUser = { ...currentEmployee, completedTasks: Array.from(newCompleted) };
+    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
   };
 
   const completionPercentage = Math.round((completedTasks.size / onboardingTasks.length) * 100);
@@ -105,7 +136,7 @@ export const EmployeeDashboard = () => {
             </div>
             <div>
               <h2 className="text-2xl font-bold text-foreground mb-2">
-                Welcome to ABC Project! 🎉
+                Welcome {currentEmployee.name}! 🎉
               </h2>
               <p className="text-foreground/80 text-lg mb-4">
                 We're excited to have you on board! Here are the tasks you need to complete during your first week.
@@ -155,7 +186,7 @@ export const EmployeeDashboard = () => {
         <h3 className="text-xl font-semibold mb-6">Onboarding Tasks</h3>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {onboardingTasks.map((task) => (
-            <TaskCard
+            <FileUploadTask
               key={task.id}
               task={task}
               isCompleted={completedTasks.has(task.id)}

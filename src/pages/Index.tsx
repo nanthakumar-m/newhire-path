@@ -1,12 +1,11 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmployeeDashboard } from "@/components/EmployeeDashboard";
 import { ManagerDashboard } from "@/components/ManagerDashboard";
-import { Users, UserCheck } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Users, LogOut } from "lucide-react";
 
 const Index = () => {
-  const [viewMode, setViewMode] = useState<"employee" | "manager">("employee");
+  const { user, logout } = useAuth();
 
   return (
     <div className="min-h-screen bg-background">
@@ -24,23 +23,19 @@ const Index = () => {
               </div>
             </div>
             
-            {/* View Toggle */}
-            <div className="flex gap-2">
+            {/* User Info and Logout */}
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <p className="font-medium text-foreground">{user?.name}</p>
+                <p className="text-sm text-muted-foreground capitalize">{user?.type}</p>
+              </div>
               <Button
-                variant={viewMode === "employee" ? "default" : "outline"}
-                onClick={() => setViewMode("employee")}
+                variant="outline"
+                onClick={logout}
                 className="flex items-center gap-2"
               >
-                <UserCheck className="h-4 w-4" />
-                Employee View
-              </Button>
-              <Button
-                variant={viewMode === "manager" ? "default" : "outline"}
-                onClick={() => setViewMode("manager")}
-                className="flex items-center gap-2"
-              >
-                <Users className="h-4 w-4" />
-                Manager View
+                <LogOut className="h-4 w-4" />
+                Logout
               </Button>
             </div>
           </div>
@@ -49,7 +44,7 @@ const Index = () => {
 
       {/* Dashboard Content */}
       <main className="container mx-auto px-4 py-8">
-        {viewMode === "employee" ? <EmployeeDashboard /> : <ManagerDashboard />}
+        {user?.type === "employee" ? <EmployeeDashboard /> : <ManagerDashboard />}
       </main>
     </div>
   );
