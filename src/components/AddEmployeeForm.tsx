@@ -66,7 +66,7 @@ export const AddEmployeeForm = ({ onEmployeeAdded }: AddEmployeeFormProps) => {
       department: formData.department,
       onboardingDate: formData.onboardingDate,
       completedTasks: [],
-      taskSubmissions: {}
+      mandatoryTasksCompleted: false
     };
 
     const updatedEmployees = [...existingEmployees, newEmployee];
@@ -74,7 +74,7 @@ export const AddEmployeeForm = ({ onEmployeeAdded }: AddEmployeeFormProps) => {
 
     toast({
       title: 'Success',
-      description: `Employee ${formData.name} has been added successfully`
+      description: `Employee ${formData.name} (ID: ${formData.employeeId}) has been added successfully. Login credentials: ID and password are both "${formData.employeeId}"`
     });
 
     setFormData({ name: '', employeeId: '', department: '', onboardingDate: '' });
@@ -107,15 +107,18 @@ export const AddEmployeeForm = ({ onEmployeeAdded }: AddEmployeeFormProps) => {
             />
           </div>
           
-          <div className="space-y-2">
-            <Label htmlFor="employeeId">Employee ID</Label>
-            <Input
-              id="employeeId"
-              value={formData.employeeId}
-              onChange={(e) => setFormData(prev => ({ ...prev, employeeId: e.target.value }))}
-              placeholder="e.g., EMP001"
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="employeeId">Employee ID</Label>
+              <Input
+                id="employeeId"
+                value={formData.employeeId}
+                onChange={(e) => setFormData(prev => ({ ...prev, employeeId: e.target.value }))}
+                placeholder="e.g., EMP001, DEV123, etc."
+              />
+              <p className="text-xs text-muted-foreground">
+                This will be used as both username and password for login
+              </p>
+            </div>
           
           <div className="space-y-2">
             <Label htmlFor="department">Department</Label>

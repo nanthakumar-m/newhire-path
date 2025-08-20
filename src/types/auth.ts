@@ -13,25 +13,17 @@ export interface Employee extends User {
   department: string;
   onboardingDate: string;
   completedTasks: number[];
-  taskSubmissions: { [taskId: number]: TaskSubmission };
+  mandatoryTasksCompleted: boolean;
 }
 
 export interface Manager extends User {
   type: 'manager';
 }
 
-export interface TaskSubmission {
-  taskId: number;
-  employeeId: string;
-  screenshots: string[];
-  submittedAt: string;
-  status: 'pending' | 'approved' | 'rejected';
-  managerFeedback?: string;
-}
 
 export interface AuthContextType {
   user: User | null;
-  login: (username: string, password: string, userType: 'manager' | 'employee') => boolean;
+  login: (id: string, password: string) => boolean;
   logout: () => void;
   isLoading: boolean;
 }
