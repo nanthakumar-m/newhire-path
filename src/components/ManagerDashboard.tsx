@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { EmployeeTable } from "./EmployeeTable";
 import { AddEmployeeForm } from "./AddEmployeeForm";
 import { EmployeeListTable } from "./EmployeeListTable";
+import { TaskAssignmentForm } from "./TaskAssignmentForm";
 import { useState, useEffect } from "react";
 import { Employee } from "@/types/auth";
 import { 
@@ -118,6 +119,7 @@ const recentActivity = [
 export const ManagerDashboard = () => {
   const [selectedTask, setSelectedTask] = useState<{ id: number; title: string } | null>(null);
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [showTaskForm, setShowTaskForm] = useState(false);
   const [employeeStats, setEmployeeStats] = useState({
     total: 0,
     onboarded: 0,
@@ -316,12 +318,22 @@ export const ManagerDashboard = () => {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Employee Management</CardTitle>
-            <AddEmployeeForm onEmployeeAdded={loadEmployees} />
+            <div className="flex gap-2">
+              <Button 
+                variant="outline"
+                onClick={() => setShowTaskForm(true)}
+                className="flex items-center gap-2"
+              >
+                <BookOpen className="h-4 w-4" />
+                Assign New Task
+              </Button>
+              <AddEmployeeForm onEmployeeAdded={loadEmployees} />
+            </div>
           </div>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            Add new employees to the onboarding system. They will receive login credentials with their name as both username and password.
+            Add new employees to the onboarding system and assign custom tasks to all employees.
           </p>
         </CardContent>
       </Card>
@@ -387,6 +399,12 @@ export const ManagerDashboard = () => {
           </div>
         </CardContent>
       </Card>
+
+      <TaskAssignmentForm 
+        isOpen={showTaskForm}
+        onClose={() => setShowTaskForm(false)}
+        onTaskAssigned={loadEmployees}
+      />
     </div>
   );
 };

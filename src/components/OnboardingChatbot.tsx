@@ -115,10 +115,12 @@ export const OnboardingChatbot = ({ isOpen, onClose, onComplete }: OnboardingCha
     <Dialog open={isOpen} onOpenChange={() => {}}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-lg">
-            <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-              <Bot className="h-4 w-4 text-primary-foreground" />
+          <div className="flex justify-center mb-4">
+            <div className="h-16 w-16 rounded-full bg-primary flex items-center justify-center shadow-lg">
+              <Bot className="h-8 w-8 text-primary-foreground" />
             </div>
+          </div>
+          <DialogTitle className="text-center text-lg font-semibold">
             Onboarding Assistant
           </DialogTitle>
         </DialogHeader>
@@ -197,12 +199,12 @@ export const OnboardingChatbot = ({ isOpen, onClose, onComplete }: OnboardingCha
                     </div>
                   </>
                 ) : (
-                  <div className={`p-3 rounded-lg ${responseType === 'yes' ? 'bg-success/10 border border-success/20' : 'bg-destructive/10 border border-destructive/20'}`}>
-                    <p className={`text-sm ${responseType === 'yes' ? 'text-success-foreground' : 'text-destructive-foreground'}`}>
+                  <div className={`p-4 rounded-lg ${responseType === 'yes' ? 'bg-success/20 border border-success/30' : 'bg-destructive/20 border border-destructive/30'}`}>
+                    <p className={`text-sm font-medium ${responseType === 'yes' ? 'text-success' : 'text-destructive'}`}>
                       {responseType === 'yes' ? currentTask.yesResponse : currentTask.noResponse}
                     </p>
                     {responseType === 'no' && (
-                      <p className="text-xs text-muted-foreground mt-2">
+                      <p className="text-xs text-foreground/80 mt-2">
                         {currentTask.noAction}
                       </p>
                     )}

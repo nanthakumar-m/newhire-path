@@ -12,6 +12,8 @@ interface TaskProps {
     description: string;
     priority: "high" | "medium" | "low";
     estimatedTime: string;
+    isCustom?: boolean;
+    deadline?: string;
   };
   isCompleted: boolean;
   onToggleComplete: () => void;
@@ -99,9 +101,16 @@ export const TaskCard = ({ task, isCompleted, onToggleComplete }: TaskProps) => 
         </p>
         
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Clock className="h-3 w-3" />
-            <span className="font-medium">~{task.estimatedTime}</span>
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              <span className="font-medium">~{task.estimatedTime}</span>
+            </div>
+            {task.isCustom && (
+              <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">
+                Manager Task
+              </Badge>
+            )}
           </div>
 
           <Dialog open={showDialog} onOpenChange={setShowDialog}>

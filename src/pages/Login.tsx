@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Users, Lock, LogIn } from 'lucide-react';
+import { Users, LogIn } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
@@ -62,23 +62,21 @@ const Login = () => {
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="employee-id" className="text-sm font-semibold flex items-center gap-2">
-                  <Users className="h-4 w-4" />
+                <Label htmlFor="employee-id" className="text-base font-medium">
                   Employee ID
                 </Label>
                 <Input
                   id="employee-id"
                   type="text"
-                  placeholder="Enter your Employee ID (e.g., 12345 for Manager)"
+                  placeholder="Enter your Employee ID"
                   value={employeeId}
                   onChange={(e) => setEmployeeId(e.target.value)}
-                  className="h-12 text-center font-mono text-lg tracking-wider"
+                  className="h-12"
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-semibold flex items-center gap-2">
-                  <Lock className="h-4 w-4" />
+                <Label htmlFor="password" className="text-base font-medium">
                   Password
                 </Label>
                 <Input
@@ -87,16 +85,8 @@ const Login = () => {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-12 text-center font-mono text-lg tracking-wider"
+                  className="h-12"
                 />
-              </div>
-            </div>
-
-            <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 text-sm space-y-2">
-              <div className="font-semibold text-primary">Login Credentials:</div>
-              <div className="space-y-1 text-muted-foreground">
-                <div>• <span className="font-medium">Manager:</span> ID: 12345, Password: manager</div>
-                <div>• <span className="font-medium">Employee:</span> ID: {'{Employee ID}'}, Password: {'{Same as Employee ID}'}</div>
               </div>
             </div>
 

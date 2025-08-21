@@ -86,17 +86,39 @@ export const EmployeeDashboard = () => {
   const currentEmployee = user as Employee;
   const [completedTasks, setCompletedTasks] = useState<Set<number>>(new Set());
   const [showChatbot, setShowChatbot] = useState(false);
+  const [assignedTasks, setAssignedTasks] = useState<any[]>([]);
 
   useEffect(() => {
     if (currentEmployee?.completedTasks) {
       setCompletedTasks(new Set(currentEmployee.completedTasks));
     }
 
+    // Load assigned tasks from manager
+    const storedAssignedTasks = JSON.parse(localStorage.getItem('assignedTasks') || '[]');
+    setAssignedTasks(storedAssignedTasks);
+
     // Show chatbot if mandatory tasks are not completed
     if (currentEmployee && !currentEmployee.mandatoryTasksCompleted) {
       setShowChatbot(true);
     }
   }, [currentEmployee]);
+
+  // Combine default onboarding tasks with assigned tasks
+  const allTasks = [
+    ...onboardingTasks,
+    ...assignedTasks.map(task => ({
+      id: task.id,
+      title: task.title,
+      description: task.description,
+      priority: task.priority,
+      estimatedTime: task.estimatedTime,
+      isCustom: true,
+      deadline: task.deadline
+    }))
+  ];
+
+  const completionPercentage = allTasks.length > 0 ? Math.round((completedTasks.size / allTasks.length) * 100) : 0;
+  const remainingTasks = allTasks.length - completedTasks.size;
 
   const toggleTaskCompletion = (taskId: number) => {
     const newCompleted = new Set(completedTasks);
@@ -125,10 +147,13 @@ export const EmployeeDashboard = () => {
 
   const handleChatbotComplete = () => {
     setShowChatbot(false);
+    // Refresh the current user data to reflect the updated mandatory tasks status
+    const updatedUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (updatedUser.mandatoryTasksCompleted) {
+      // Force a re-render by updating the component state
+      window.location.reload();
+    }
   };
-
-  const completionPercentage = Math.round((completedTasks.size / onboardingTasks.length) * 100);
-  const remainingTasks = onboardingTasks.length - completedTasks.size;
 
   // Show simplified view if mandatory tasks not completed
   if (!currentEmployee?.mandatoryTasksCompleted) {
@@ -176,7 +201,7 @@ export const EmployeeDashboard = () => {
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-white/80 dark:bg-black/20 backdrop-blur-sm">
                   <CheckCircle className="h-6 w-6 text-success" />
                   <div>
-                    <div className="font-bold text-lg">{completedTasks.size}/{onboardingTasks.length}</div>
+                    <div className="font-bold text-lg">{completedTasks.size}/{allTasks.length}</div>
                     <div className="text-sm text-muted-foreground">Tasks Completed</div>
                   </div>
                 </div>
@@ -219,7 +244,7 @@ export const EmployeeDashboard = () => {
               }
             </span>
             <span className="font-medium">
-              {completedTasks.size} of {onboardingTasks.length} completed
+              {completedTasks.size} of {allTasks.length} completed
             </span>
           </div>
           {completionPercentage === 100 && (
@@ -241,7 +266,7 @@ export const EmployeeDashboard = () => {
           </Badge>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {onboardingTasks.map((task) => (
+          {allTasks.map((task) => (
             <TaskCard
               key={task.id}
               task={task}
