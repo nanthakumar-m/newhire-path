@@ -23,6 +23,7 @@ export const TaskAssignmentForm = ({ isOpen, onClose, onTaskAssigned }: TaskAssi
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<'high' | 'medium' | 'low'>('medium');
   const [estimatedTime, setEstimatedTime] = useState('');
+  const [points, setPoints] = useState(10);
   const [deadline, setDeadline] = useState<Date>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -43,22 +44,23 @@ export const TaskAssignmentForm = ({ isOpen, onClose, onTaskAssigned }: TaskAssi
 
     try {
       // Get existing tasks
-      const existingTasks = JSON.parse(localStorage.getItem('assignedTasks') || '[]');
+      const existingTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
       
       // Create new task
       const newTask = {
         id: Date.now(),
-        title: taskName.trim(),
+        name: taskName.trim(),
         description: description.trim(),
         priority,
         estimatedTime: estimatedTime.trim(),
-        deadline: deadline.toISOString(),
+        points: points,
+        deadline: format(deadline, 'MMM dd, yyyy'),
         assignedDate: new Date().toISOString(),
         isCustom: true
       };
 
       // Save to localStorage
-      localStorage.setItem('assignedTasks', JSON.stringify([...existingTasks, newTask]));
+      localStorage.setItem('tasks', JSON.stringify([...existingTasks, newTask]));
 
       toast({
         title: 'Success',
@@ -70,6 +72,7 @@ export const TaskAssignmentForm = ({ isOpen, onClose, onTaskAssigned }: TaskAssi
       setDescription('');
       setPriority('medium');
       setEstimatedTime('');
+      setPoints(10);
       setDeadline(undefined);
       
       onTaskAssigned();
@@ -90,6 +93,7 @@ export const TaskAssignmentForm = ({ isOpen, onClose, onTaskAssigned }: TaskAssi
     setDescription('');
     setPriority('medium');
     setEstimatedTime('');
+    setPoints(10);
     setDeadline(undefined);
     onClose();
   };
@@ -129,7 +133,7 @@ export const TaskAssignmentForm = ({ isOpen, onClose, onTaskAssigned }: TaskAssi
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label>Priority</Label>
               <Select value={priority} onValueChange={(value: 'high' | 'medium' | 'low') => setPriority(value)}>
@@ -151,6 +155,18 @@ export const TaskAssignmentForm = ({ isOpen, onClose, onTaskAssigned }: TaskAssi
                 value={estimatedTime}
                 onChange={(e) => setEstimatedTime(e.target.value)}
                 placeholder="e.g., 30 min"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="points">Points</Label>
+              <Input
+                id="points"
+                type="number"
+                value={points || ''}
+                onChange={(e) => setPoints(Number(e.target.value) || 10)}
+                placeholder="10"
+                min="1"
               />
             </div>
           </div>

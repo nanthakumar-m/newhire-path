@@ -1,159 +1,81 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TaskCard } from "@/components/TaskCard";
-import { OnboardingChatbot } from "@/components/OnboardingChatbot";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Clock, Star, Award, TrendingUp } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { Employee } from "@/types/auth";
-
-const onboardingTasks = [
-  {
-    id: 1,
-    title: "Complete Mandatory Safety Course",
-    description: "Complete the workplace safety and emergency procedures course. Essential for all new employees.",
-    priority: "high" as const,
-    estimatedTime: "45 min",
-  },
-  {
-    id: 2,
-    title: "Get IT Access & Equipment Setup",
-    description: "Collect laptop, phone, and get access to company systems",
-    priority: "high" as const,
-    estimatedTime: "30 min",
-  },
-  {
-    id: 3,
-    title: "Connect with Direct Manager",
-    description: "Schedule and attend your first one-on-one meeting",
-    priority: "high" as const,
-    estimatedTime: "60 min",
-  },
-  {
-    id: 4,
-    title: "Complete HR Documentation",
-    description: "Fill out tax forms, benefits enrollment, and emergency contacts",
-    priority: "high" as const,
-    estimatedTime: "20 min",
-  },
-  {
-    id: 5,
-    title: "Team Introduction Meeting",
-    description: "Meet your team members and learn about ongoing projects",
-    priority: "medium" as const,
-    estimatedTime: "45 min",
-  },
-  {
-    id: 6,
-    title: "Company Culture Overview",
-    description: "Learn about company values, mission, and culture",
-    priority: "medium" as const,
-    estimatedTime: "30 min",
-  },
-  {
-    id: 7,
-    title: "Security & Compliance Training",
-    description: "Complete cybersecurity awareness and compliance training modules",
-    priority: "high" as const,
-    estimatedTime: "35 min",
-  },
-  {
-    id: 8,
-    title: "Office Tour & Facilities",
-    description: "Get familiar with office layout, amenities, and facilities",
-    priority: "low" as const,
-    estimatedTime: "15 min",
-  },
-  {
-    id: 9,
-    title: "Benefits Information Session",
-    description: "Learn about health insurance, retirement plans, and perks",
-    priority: "medium" as const,
-    estimatedTime: "40 min",
-  },
-  {
-    id: 10,
-    title: "Set Up Development Environment",
-    description: "Install and configure necessary software and development tools",
-    priority: "high" as const,
-    estimatedTime: "90 min",
-  },
-];
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Calendar, CheckCircle, Clock, User, Award, Trophy } from 'lucide-react';
+import { TaskCard } from '@/components/TaskCard';
+import { OnboardingChatbot } from '@/components/OnboardingChatbot';
+import { Leaderboard } from '@/components/Leaderboard';
+import { useAuth } from '@/contexts/AuthContext';
+import { Employee } from '@/types/auth';
 
 export const EmployeeDashboard = () => {
   const { user } = useAuth();
   const currentEmployee = user as Employee;
-  const [completedTasks, setCompletedTasks] = useState<Set<number>>(new Set());
   const [showChatbot, setShowChatbot] = useState(false);
-  const [assignedTasks, setAssignedTasks] = useState<any[]>([]);
 
   useEffect(() => {
-    if (currentEmployee?.completedTasks) {
-      setCompletedTasks(new Set(currentEmployee.completedTasks));
-    }
-
-    // Load assigned tasks from manager
-    const storedAssignedTasks = JSON.parse(localStorage.getItem('assignedTasks') || '[]');
-    setAssignedTasks(storedAssignedTasks);
-
     // Show chatbot if mandatory tasks are not completed
     if (currentEmployee && !currentEmployee.mandatoryTasksCompleted) {
       setShowChatbot(true);
     }
   }, [currentEmployee]);
 
-  // Combine default onboarding tasks with assigned tasks
-  const allTasks = [
-    ...onboardingTasks,
-    ...assignedTasks.map(task => ({
-      id: task.id,
-      title: task.title,
-      description: task.description,
-      priority: task.priority,
-      estimatedTime: task.estimatedTime,
-      isCustom: true,
-      deadline: task.deadline
-    }))
-  ];
-
-  const completionPercentage = allTasks.length > 0 ? Math.round((completedTasks.size / allTasks.length) * 100) : 0;
-  const remainingTasks = allTasks.length - completedTasks.size;
-
-  const toggleTaskCompletion = (taskId: number) => {
-    const newCompleted = new Set(completedTasks);
-
-    if (newCompleted.has(taskId)) {
-      newCompleted.delete(taskId);
-    } else {
-      newCompleted.add(taskId);
-    }
-    setCompletedTasks(newCompleted);
-
-    // Update localStorage
+  const handleToggleComplete = (taskId: number) => {
     const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    const task = tasks.find((t: any) => t.id === taskId);
+    const taskPoints = task?.points || 10;
+    
     const updatedEmployees = employees.map((emp: Employee) => {
       if (emp.id === currentEmployee.id) {
-        return { ...emp, completedTasks: Array.from(newCompleted) };
+        const isCompleting = !emp.completedTasks.includes(taskId);
+        const updatedTasks = isCompleting
+          ? [...emp.completedTasks, taskId]
+          : emp.completedTasks.filter(id => id !== taskId);
+        
+        const currentPoints = emp.points || 0;
+        const updatedPoints = isCompleting 
+          ? currentPoints + taskPoints 
+          : Math.max(0, currentPoints - taskPoints);
+          
+        return { ...emp, completedTasks: updatedTasks, points: updatedPoints };
       }
       return emp;
     });
-    localStorage.setItem('employees', JSON.stringify(updatedEmployees));
 
-    // Update current user
-    const updatedUser = { ...currentEmployee, completedTasks: Array.from(newCompleted) };
-    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+    localStorage.setItem('employees', JSON.stringify(updatedEmployees));
+    window.dispatchEvent(new Event('storage'));
   };
 
   const handleChatbotComplete = () => {
     setShowChatbot(false);
-    // Refresh the current user data to reflect the updated mandatory tasks status
-    const updatedUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    if (updatedUser.mandatoryTasksCompleted) {
-      // Force a re-render by updating the component state
-      window.location.reload();
-    }
+    // Force a re-render to show the full dashboard
+    window.location.reload();
   };
+
+  const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+  const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+  const completedCount = currentEmployee?.completedTasks?.length || 0;
+  const totalTasks = tasks.length;
+  const progress = totalTasks > 0 ? (completedCount / totalTasks) * 100 : 0;
+  const currentPoints = currentEmployee?.points || 0;
+
+  const getTasksWithLockStatus = () => {
+    return tasks.map((task: any, index: number) => {
+      const requiredPoints = index * 10; // Each task requires 10 more points than the previous
+      const isLocked = currentPoints < requiredPoints && !currentEmployee?.completedTasks?.includes(task.id);
+      return {
+        ...task,
+        isLocked,
+        requiredPoints,
+        points: task.points || 10
+      };
+    });
+  };
+
+  const tasksWithLockStatus = getTasksWithLockStatus();
 
   // Show simplified view if mandatory tasks not completed
   if (!currentEmployee?.mandatoryTasksCompleted) {
@@ -181,101 +103,113 @@ export const EmployeeDashboard = () => {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Welcome Section */}
-      <Card className="relative overflow-hidden border-0 bg-gradient-to-r from-primary/10 via-primary/5 to-accent/10">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent" />
-        <CardContent className="relative p-8">
-          <div className="flex items-center gap-6">
-            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-lg">
-              <Award className="h-10 w-10 text-primary-foreground" />
-            </div>
-            <div className="flex-1">
-              <h2 className="text-3xl font-bold text-foreground mb-3">
-                Welcome back, {currentEmployee.name}! 
-              </h2>
-              <p className="text-foreground/70 text-lg mb-6 leading-relaxed">
-                Great job on completing your initial setup! Continue with your onboarding tasks to unlock the full platform experience.
-              </p>
-              <div className="flex items-center gap-8">
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-white/80 dark:bg-black/20 backdrop-blur-sm">
-                  <CheckCircle className="h-6 w-6 text-success" />
-                  <div>
-                    <div className="font-bold text-lg">{completedTasks.size}/{allTasks.length}</div>
-                    <div className="text-sm text-muted-foreground">Tasks Completed</div>
-                  </div>
+    <div className="container mx-auto p-6">
+      <Tabs defaultValue="dashboard" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+          <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="dashboard" className="space-y-6">
+          {/* Welcome Section */}
+          <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-2xl font-bold text-primary mb-2">
+                    Welcome back, {currentEmployee?.name}!
+                  </h1>
+                  <p className="text-muted-foreground">
+                    Employee ID: {currentEmployee?.employeeId} • Department: {currentEmployee?.department}
+                  </p>
                 </div>
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-white/80 dark:bg-black/20 backdrop-blur-sm">
-                  <TrendingUp className="h-6 w-6 text-primary" />
-                  <div>
-                    <div className="font-bold text-lg">{completionPercentage}%</div>
-                    <div className="text-sm text-muted-foreground">Progress</div>
+                <div className="text-right">
+                  <Badge variant="outline" className="mb-2">
+                    <User className="h-3 w-3 mr-1" />
+                    Employee
+                  </Badge>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Award className="h-4 w-4 text-yellow-500" />
+                    <span className="font-semibold">{currentPoints} points</span>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
 
-      {/* Progress Overview */}
-      <Card className="border-primary/20">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between text-xl">
-            <span className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              Your Onboarding Journey
-            </span>
-            <Badge 
-              variant={completionPercentage === 100 ? "default" : "secondary"} 
-              className="text-lg px-4 py-2 font-bold"
-            >
-              {completionPercentage}%
-            </Badge>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Progress value={completionPercentage} className="h-4" />
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">
-              {remainingTasks > 0 
-                ? `${remainingTasks} tasks remaining` 
-                : "All tasks completed! 🎉"
-              }
-            </span>
-            <span className="font-medium">
-              {completedTasks.size} of {allTasks.length} completed
-            </span>
-          </div>
-          {completionPercentage === 100 && (
-            <div className="p-4 bg-success/10 border border-success/20 rounded-lg">
-              <p className="text-success font-medium text-center">
-                🎉 Congratulations! You've completed your onboarding journey!
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+          {/* Progress Overview */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Award className="h-5 w-5 text-primary" />
+                Progress Overview
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm font-medium">Tasks Completed</span>
+                  <span className="text-sm text-muted-foreground">{completedCount}/{totalTasks}</span>
+                </div>
+                <Progress value={progress} className="h-2" />
+              </div>
+              <div className="flex gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-success" />
+                  <span>{completedCount} Completed</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-warning" />
+                  <span>{totalTasks - completedCount} Pending</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Award className="h-4 w-4 text-yellow-500" />
+                  <span>{currentPoints} Points</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-      {/* Professional Task Grid */}
-      <div>
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-2xl font-bold text-foreground">Learning & Development Tasks</h3>
-          <Badge variant="outline" className="text-sm">
-            {remainingTasks} Remaining
-          </Badge>
-        </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {allTasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              isCompleted={completedTasks.has(task.id)}
-              onToggleComplete={() => toggleTaskCompletion(task.id)}
-            />
-          ))}
-        </div>
-      </div>
+          {/* Tasks Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-primary" />
+                Your Tasks
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {tasksWithLockStatus.length > 0 ? (
+                <div className="grid gap-4 md:grid-cols-2">
+                  {tasksWithLockStatus.map((task: any) => (
+                    <TaskCard
+                      key={task.id}
+                      id={task.id}
+                      title={task.name}
+                      description={`Complete this task by the deadline to earn ${task.points} points.`}
+                      deadline={task.deadline}
+                      isCompleted={currentEmployee?.completedTasks?.includes(task.id) || false}
+                      onToggleComplete={handleToggleComplete}
+                      points={task.points}
+                      isLocked={task.isLocked}
+                      requiredPoints={task.requiredPoints}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                  <p>No tasks assigned yet</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="leaderboard">
+          <Leaderboard employees={employees} />
+        </TabsContent>
+      </Tabs>
 
       <OnboardingChatbot 
         isOpen={showChatbot}

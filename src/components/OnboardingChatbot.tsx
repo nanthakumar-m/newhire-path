@@ -49,6 +49,15 @@ export const OnboardingChatbot = ({ isOpen, onClose, onComplete }: OnboardingCha
   useEffect(() => {
     if (isOpen && currentEmployee?.mandatoryTasksCompleted) {
       setCurrentStep('completed');
+    } else if (isOpen && currentEmployee) {
+      // Load saved progress
+      const savedProgress = localStorage.getItem(`onboarding_${currentEmployee.id}`);
+      if (savedProgress) {
+        const progress = JSON.parse(savedProgress);
+        setCurrentStep(progress.currentStep);
+        setCurrentTaskIndex(progress.currentTaskIndex);
+        setCompletedTasks(progress.completedTasks);
+      }
     }
   }, [isOpen, currentEmployee]);
 
@@ -61,30 +70,45 @@ export const OnboardingChatbot = ({ isOpen, onClose, onComplete }: OnboardingCha
     setCurrentTaskIndex(0);
   };
 
+  const saveProgress = () => {
+    if (currentEmployee) {
+      const progress = {
+        currentStep,
+        currentTaskIndex,
+        completedTasks
+      };
+      localStorage.setItem(`onboarding_${currentEmployee.id}`, JSON.stringify(progress));
+    }
+  };
+
   const handleTaskResponse = (response: 'yes' | 'no') => {
     setResponseType(response);
     setShowResponse(true);
 
     if (response === 'yes') {
       const taskId = mandatoryTasks[currentTaskIndex].id;
-      setCompletedTasks(prev => [...prev, taskId]);
+      const newCompletedTasks = [...completedTasks, taskId];
+      setCompletedTasks(newCompletedTasks);
       
       setTimeout(() => {
         if (currentTaskIndex < mandatoryTasks.length - 1) {
           setCurrentTaskIndex(prev => prev + 1);
           setShowResponse(false);
           setResponseType(null);
+          saveProgress();
         } else {
           // All tasks completed
           setCurrentStep('completed');
           updateEmployeeMandatoryStatus(true);
+          localStorage.removeItem(`onboarding_${currentEmployee?.id}`);
           onComplete();
         }
       }, 2000);
     } else {
       setTimeout(() => {
-        setCurrentStep('waiting');
-        onClose();
+        setShowResponse(false);
+        setResponseType(null);
+        saveProgress();
       }, 3000);
     }
   };
@@ -148,16 +172,12 @@ export const OnboardingChatbot = ({ isOpen, onClose, onComplete }: OnboardingCha
             <Card className="border-warning/20 bg-warning/5">
               <CardContent className="p-4 space-y-4">
                 <p className="text-sm">
-                  You have some <span className="font-semibold text-warning">mandatory tasks</span> to complete before accessing your full dashboard. Shall we go through them together?
+                  You have some <span className="font-semibold text-warning">mandatory tasks</span> to complete before accessing your full dashboard. Let's get started!
                 </p>
-                <div className="flex gap-2">
-                  <Button onClick={handleStartTasks} className="flex-1">
-                    Yes, Let's Do This!
-                  </Button>
-                  <Button variant="outline" onClick={onClose} className="flex-1">
-                    Maybe Later
-                  </Button>
-                </div>
+                <Button onClick={handleStartTasks} className="w-full">
+                  Proceed with Tasks
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
               </CardContent>
             </Card>
           )}
@@ -207,6 +227,18 @@ export const OnboardingChatbot = ({ isOpen, onClose, onComplete }: OnboardingCha
                       <p className="text-xs text-foreground/80 mt-2">
                         {currentTask.noAction}
                       </p>
+                    )}
+                    {responseType === 'no' && (
+                      <Button 
+                        onClick={() => {
+                          setShowResponse(false);
+                          setResponseType(null);
+                        }} 
+                        size="sm" 
+                        className="mt-3 w-full"
+                      >
+                        I've Completed This Task
+                      </Button>
                     )}
                   </div>
                 )}
