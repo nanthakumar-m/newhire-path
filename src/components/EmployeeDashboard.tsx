@@ -23,10 +23,14 @@ export const EmployeeDashboard = () => {
   }, [currentEmployee]);
 
   const handleToggleComplete = (taskId: number) => {
+    console.log('Mark as complete clicked for task:', taskId);
     const employees = JSON.parse(localStorage.getItem('employees') || '[]');
     const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
     const task = tasks.find((t: any) => t.id === taskId);
     const taskPoints = task?.points || 10;
+    
+    console.log('Current employee:', currentEmployee);
+    console.log('Task found:', task);
     
     const updatedEmployees = employees.map((emp: Employee) => {
       if (emp.id === currentEmployee.id) {
@@ -40,13 +44,23 @@ export const EmployeeDashboard = () => {
           ? currentPoints + taskPoints 
           : Math.max(0, currentPoints - taskPoints);
           
-        return { ...emp, completedTasks: updatedTasks, points: updatedPoints };
+        const updatedEmployee = { ...emp, completedTasks: updatedTasks, points: updatedPoints };
+        console.log('Updated employee:', updatedEmployee);
+        return updatedEmployee;
       }
       return emp;
     });
 
     localStorage.setItem('employees', JSON.stringify(updatedEmployees));
-    window.dispatchEvent(new Event('storage'));
+    
+    // Update the current user in localStorage as well to sync with auth context
+    const updatedCurrentEmployee = updatedEmployees.find(emp => emp.id === currentEmployee.id);
+    if (updatedCurrentEmployee) {
+      localStorage.setItem('currentUser', JSON.stringify(updatedCurrentEmployee));
+    }
+    
+    // Force component re-render by reloading
+    window.location.reload();
   };
 
   const handleChatbotComplete = () => {
