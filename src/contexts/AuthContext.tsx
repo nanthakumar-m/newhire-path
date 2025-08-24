@@ -27,8 +27,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           employeeId: 'EMP001',
           department: 'Engineering',
           onboardingDate: '2024-01-15',
-          completedTasks: [1, 2, 3, 4, 5, 6, 7],
-          mandatoryTasksCompleted: true
+          completedTasks: [],
+          mandatoryTasksCompleted: false,
+          points: 0
         },
         {
           id: '2',
@@ -37,8 +38,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           employeeId: 'EMP002',
           department: 'Engineering',
           onboardingDate: '2024-01-20',
-          completedTasks: [1, 2, 3, 4, 5, 8],
-          mandatoryTasksCompleted: true
+          completedTasks: [],
+          mandatoryTasksCompleted: false,
+          points: 0
         },
         {
           id: '3',
@@ -47,11 +49,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           employeeId: 'EMP003',
           department: 'Marketing',
           onboardingDate: '2024-01-10',
-          completedTasks: [1, 2, 4, 5, 6, 7, 8, 9],
-          mandatoryTasksCompleted: true
+          completedTasks: [],
+          mandatoryTasksCompleted: false,
+          points: 0
         }
       ];
       localStorage.setItem('employees', JSON.stringify(sampleEmployees));
+    }
+
+    // Initialize with sample tasks if none exist
+    const existingTasks = localStorage.getItem('tasks');
+    if (!existingTasks) {
+      const sampleTasks = [
+        { id: 1, name: 'Complete System Training', deadline: '2024-02-15', points: 20 },
+        { id: 2, name: 'Setup Development Environment', deadline: '2024-02-18', points: 15 },
+        { id: 3, name: 'Review Company Policies', deadline: '2024-02-20', points: 10 },
+        { id: 4, name: 'Attend Team Introduction', deadline: '2024-02-22', points: 25 },
+        { id: 5, name: 'Complete Security Training', deadline: '2024-02-25', points: 30 },
+        { id: 6, name: 'Setup Project Access', deadline: '2024-02-28', points: 20 },
+        { id: 7, name: 'Review Documentation', deadline: '2024-03-02', points: 15 },
+        { id: 8, name: 'Complete Compliance Training', deadline: '2024-03-05', points: 25 },
+        { id: 9, name: 'Submit Initial Assessment', deadline: '2024-03-08', points: 35 },
+        { id: 10, name: 'Schedule Manager Review', deadline: '2024-03-10', points: 40 }
+      ];
+      localStorage.setItem('tasks', JSON.stringify(sampleTasks));
     }
 
     // Check for existing session

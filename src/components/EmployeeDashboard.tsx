@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import { Calendar, CheckCircle, Clock, User, Award, Trophy } from 'lucide-react';
 import { TaskCard } from '@/components/TaskCard';
 import { OnboardingChatbot } from '@/components/OnboardingChatbot';
@@ -64,8 +64,9 @@ export const EmployeeDashboard = () => {
 
   const getTasksWithLockStatus = () => {
     return tasks.map((task: any, index: number) => {
-      const requiredPoints = index * 10; // Each task requires 10 more points than the previous
-      const isLocked = currentPoints < requiredPoints && !currentEmployee?.completedTasks?.includes(task.id);
+      // First task is always unlocked, subsequent tasks require previous completion
+      const isLocked = index > 0 && !currentEmployee?.completedTasks?.includes(tasks[index - 1].id);
+      const requiredPoints = index > 0 ? tasks[index - 1].points || 10 : 0;
       return {
         ...task,
         isLocked,
@@ -103,14 +104,11 @@ export const EmployeeDashboard = () => {
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <Tabs defaultValue="dashboard" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-          <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="dashboard" className="space-y-6">
+    <div className="container mx-auto p-6 space-y-6">
+      {/* Leaderboard at the top */}
+      <Leaderboard employees={employees} />
+      
+      <div className="space-y-6">
           {/* Welcome Section */}
           <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
             <CardContent className="p-6">
@@ -204,12 +202,7 @@ export const EmployeeDashboard = () => {
               )}
             </CardContent>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="leaderboard">
-          <Leaderboard employees={employees} />
-        </TabsContent>
-      </Tabs>
+      </div>
 
       <OnboardingChatbot 
         isOpen={showChatbot}
