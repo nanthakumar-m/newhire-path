@@ -65,14 +65,27 @@ export const TaskCard = ({ id, title, description, deadline, isCompleted, onTogg
             </Badge>
           </div>
           
-          {!isCompleted && !isLocked && (
-            <Button 
-              onClick={handleMarkComplete} 
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-            >
-              Mark as Complete
-              <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
+          {!isLocked && (
+            <div className="flex justify-end">
+              <Button 
+                onClick={handleMarkComplete} 
+                variant={isCompleted ? "outline" : "default"}
+                size="sm"
+                className="px-4 py-2 text-sm"
+              >
+                {isCompleted ? (
+                  <>
+                    <Clock className="h-3 w-3 mr-2" />
+                    Mark Incomplete
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="h-3 w-3 mr-2" />
+                    Mark Complete
+                  </>
+                )}
+              </Button>
+            </div>
           )}
         </div>
       </CardContent>
