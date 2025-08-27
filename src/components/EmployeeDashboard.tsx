@@ -2,11 +2,9 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-
-import { Calendar, CheckCircle, Clock, User, Award, Trophy } from 'lucide-react';
+import { Calendar, CheckCircle, Clock, User, Target, BookOpen, Users } from 'lucide-react';
 import { TaskCard } from '@/components/TaskCard';
 import { OnboardingChatbot } from '@/components/OnboardingChatbot';
-import { Leaderboard } from '@/components/Leaderboard';
 import { useAuth } from '@/contexts/AuthContext';
 import { Employee } from '@/types/auth';
 
@@ -23,14 +21,7 @@ export const EmployeeDashboard = () => {
   }, [currentEmployee]);
 
   const handleToggleComplete = (taskId: number) => {
-    console.log('Mark as complete clicked for task:', taskId);
     const employees = JSON.parse(localStorage.getItem('employees') || '[]');
-    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-    const task = tasks.find((t: any) => t.id === taskId);
-    const taskPoints = task?.points || 10;
-    
-    console.log('Current employee:', currentEmployee);
-    console.log('Task found:', task);
     
     const updatedEmployees = employees.map((emp: Employee) => {
       if (emp.id === currentEmployee.id) {
@@ -38,14 +29,8 @@ export const EmployeeDashboard = () => {
         const updatedTasks = isCompleting
           ? [...emp.completedTasks, taskId]
           : emp.completedTasks.filter(id => id !== taskId);
-        
-        const currentPoints = emp.points || 0;
-        const updatedPoints = isCompleting 
-          ? currentPoints + taskPoints 
-          : Math.max(0, currentPoints - taskPoints);
           
-        const updatedEmployee = { ...emp, completedTasks: updatedTasks, points: updatedPoints };
-        console.log('Updated employee:', updatedEmployee);
+        const updatedEmployee = { ...emp, completedTasks: updatedTasks };
         return updatedEmployee;
       }
       return emp;
@@ -70,22 +55,17 @@ export const EmployeeDashboard = () => {
   };
 
   const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-  const employees = JSON.parse(localStorage.getItem('employees') || '[]');
   const completedCount = currentEmployee?.completedTasks?.length || 0;
   const totalTasks = tasks.length;
   const progress = totalTasks > 0 ? (completedCount / totalTasks) * 100 : 0;
-  const currentPoints = currentEmployee?.points || 0;
 
   const getTasksWithLockStatus = () => {
     return tasks.map((task: any, index: number) => {
       // First task is always unlocked, subsequent tasks require previous completion
       const isLocked = index > 0 && !currentEmployee?.completedTasks?.includes(tasks[index - 1].id);
-      const requiredPoints = index > 0 ? tasks[index - 1].points || 10 : 0;
       return {
         ...task,
-        isLocked,
-        requiredPoints,
-        points: task.points || 10
+        isLocked
       };
     });
   };
@@ -95,16 +75,18 @@ export const EmployeeDashboard = () => {
   // Show simplified view if mandatory tasks not completed
   if (!currentEmployee?.mandatoryTasksCompleted) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Card className="max-w-md text-center">
-          <CardContent className="p-8 space-y-4">
-            <div className="h-16 w-16 rounded-full bg-primary mx-auto flex items-center justify-center">
-              <Clock className="h-8 w-8 text-primary-foreground" />
+      <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 flex items-center justify-center p-6">
+        <Card className="max-w-lg text-center shadow-xl border-0 bg-card/80 backdrop-blur-sm">
+          <CardContent className="p-8 space-y-6">
+            <div className="h-20 w-20 rounded-full bg-primary/10 mx-auto flex items-center justify-center">
+              <Users className="h-10 w-10 text-primary" />
             </div>
-            <h3 className="text-xl font-semibold">Almost There!</h3>
-            <p className="text-muted-foreground">
-              Please complete the mandatory setup tasks first to access your full dashboard.
-            </p>
+            <div className="space-y-2">
+              <h3 className="text-2xl font-bold text-foreground">Welcome to Onboarding!</h3>
+              <p className="text-muted-foreground">
+                Let's get you started with your journey. Complete the setup process to access your personalized dashboard.
+              </p>
+            </div>
           </CardContent>
         </Card>
         
@@ -118,111 +100,134 @@ export const EmployeeDashboard = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      {/* Leaderboard at the top */}
-      <Leaderboard employees={employees} />
-      
-      <div className="space-y-6">
-          {/* Welcome Section */}
-          <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-2xl font-bold text-primary mb-2">
-                    Welcome back, {currentEmployee?.name}!
-                  </h1>
-                  <p className="text-muted-foreground">
-                    Employee ID: {currentEmployee?.employeeId} • Department: {currentEmployee?.department}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <Badge variant="outline" className="mb-2">
-                    <User className="h-3 w-3 mr-1" />
-                    Employee
-                  </Badge>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Award className="h-4 w-4 text-yellow-500" />
-                    <span className="font-semibold">{currentPoints} points</span>
-                  </div>
-                </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5">
+      <div className="container mx-auto p-6 space-y-8">
+        {/* Header Section */}
+        <div className="text-center space-y-3 py-6">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            Welcome, {currentEmployee?.name}
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Complete your onboarding journey and unlock your full potential with our step-by-step process
+          </p>
+        </div>
+
+        {/* Stats Overview Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-primary/5 to-primary/10 hover:shadow-xl transition-all duration-300">
+            <CardContent className="p-6 text-center">
+              <div className="h-14 w-14 rounded-full bg-primary/10 mx-auto mb-4 flex items-center justify-center">
+                <User className="h-7 w-7 text-primary" />
               </div>
+              <p className="text-sm font-medium text-muted-foreground mb-1">Employee ID</p>
+              <p className="text-xl font-bold text-foreground">{currentEmployee?.employeeId}</p>
             </CardContent>
           </Card>
 
-          {/* Progress Overview */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Award className="h-5 w-5 text-primary" />
-                Progress Overview
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium">Tasks Completed</span>
-                  <span className="text-sm text-muted-foreground">{completedCount}/{totalTasks}</span>
-                </div>
-                <Progress value={progress} className="h-2" />
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20 hover:shadow-xl transition-all duration-300">
+            <CardContent className="p-6 text-center">
+              <div className="h-14 w-14 rounded-full bg-blue-500/10 mx-auto mb-4 flex items-center justify-between">
+                <BookOpen className="h-7 w-7 text-blue-600 dark:text-blue-400" />
               </div>
-              <div className="flex gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-success" />
-                  <span>{completedCount} Completed</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-warning" />
-                  <span>{totalTasks - completedCount} Pending</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Award className="h-4 w-4 text-yellow-500" />
-                  <span>{currentPoints} Points</span>
-                </div>
-              </div>
+              <p className="text-sm font-medium text-muted-foreground mb-1">Department</p>
+              <p className="text-xl font-bold text-foreground">{currentEmployee?.department}</p>
             </CardContent>
           </Card>
 
-          {/* Tasks Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/20 dark:to-green-900/20 hover:shadow-xl transition-all duration-300">
+            <CardContent className="p-6 text-center">
+              <div className="h-14 w-14 rounded-full bg-green-500/10 mx-auto mb-4 flex items-center justify-center">
+                <CheckCircle className="h-7 w-7 text-green-600 dark:text-green-400" />
+              </div>
+              <p className="text-sm font-medium text-muted-foreground mb-1">Tasks Completed</p>
+              <p className="text-xl font-bold text-foreground">{completedCount} / {totalTasks}</p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/20 dark:to-orange-900/20 hover:shadow-xl transition-all duration-300">
+            <CardContent className="p-6 text-center">
+              <div className="h-14 w-14 rounded-full bg-orange-500/10 mx-auto mb-4 flex items-center justify-center">
+                <Target className="h-7 w-7 text-orange-600 dark:text-orange-400" />
+              </div>
+              <p className="text-sm font-medium text-muted-foreground mb-1">Progress</p>
+              <p className="text-xl font-bold text-foreground">{Math.round(progress)}%</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Progress Overview */}
+        <Card className="border-0 shadow-lg">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-3 text-xl">
+              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Target className="h-5 w-5 text-primary" />
+              </div>
+              Onboarding Progress
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium text-foreground">Overall Completion</span>
+                <span className="text-sm text-muted-foreground font-medium">{completedCount} of {totalTasks} tasks completed</span>
+              </div>
+              <Progress value={progress} className="h-3 bg-secondary" />
+            </div>
+            <div className="flex justify-center gap-8 text-sm pt-2">
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 rounded-full bg-green-500"></div>
+                <span className="font-medium">{completedCount} Completed</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 rounded-full bg-orange-500"></div>
+                <span className="font-medium">{totalTasks - completedCount} Remaining</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Tasks Section */}
+        <Card className="border-0 shadow-lg">
+          <CardHeader className="pb-6">
+            <CardTitle className="flex items-center gap-3 text-xl">
+              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Calendar className="h-5 w-5 text-primary" />
-                Your Tasks
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {tasksWithLockStatus.length > 0 ? (
-                <div className="grid gap-4 md:grid-cols-2">
-                  {tasksWithLockStatus.map((task: any) => (
-                    <TaskCard
-                      key={task.id}
-                      id={task.id}
-                      title={task.name}
-                      description={`Complete this task by the deadline to earn ${task.points} points.`}
-                      deadline={task.deadline}
-                      isCompleted={currentEmployee?.completedTasks?.includes(task.id) || false}
-                      onToggleComplete={handleToggleComplete}
-                      points={task.points}
-                      isLocked={task.isLocked}
-                      requiredPoints={task.requiredPoints}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <p>No tasks assigned yet</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-      </div>
+              </div>
+              Your Onboarding Tasks
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {tasksWithLockStatus.length > 0 ? (
+              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {tasksWithLockStatus.map((task: any) => (
+                  <TaskCard
+                    key={task.id}
+                    id={task.id}
+                    title={task.name}
+                    description={`Complete this essential onboarding task by the specified deadline to progress to the next step.`}
+                    deadline={task.deadline}
+                    isCompleted={currentEmployee?.completedTasks?.includes(task.id) || false}
+                    onToggleComplete={handleToggleComplete}
+                    isLocked={task.isLocked}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16 text-muted-foreground">
+                <Calendar className="h-20 w-20 mx-auto mb-6 opacity-30" />
+                <h3 className="text-xl font-semibold mb-2 text-foreground">No Tasks Available</h3>
+                <p className="text-lg">Your onboarding tasks will appear here once they are assigned by your manager.</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
-      <OnboardingChatbot 
-        isOpen={showChatbot}
-        onClose={() => setShowChatbot(false)}
-        onComplete={handleChatbotComplete}
-      />
+        <OnboardingChatbot 
+          isOpen={showChatbot}
+          onClose={() => setShowChatbot(false)}
+          onComplete={handleChatbotComplete}
+        />
+      </div>
     </div>
   );
 };

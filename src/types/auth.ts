@@ -14,7 +14,6 @@ export interface Employee extends User {
   onboardingDate: string;
   completedTasks: number[];
   mandatoryTasksCompleted: boolean;
-  points?: number;
 }
 
 export interface Manager extends User {

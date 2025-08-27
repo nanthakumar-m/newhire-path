@@ -10,12 +10,10 @@ interface TaskCardProps {
   deadline: string;
   isCompleted: boolean;
   onToggleComplete: (id: number) => void;
-  points?: number;
   isLocked?: boolean;
-  requiredPoints?: number;
 }
 
-export const TaskCard = ({ id, title, description, deadline, isCompleted, onToggleComplete, points = 10, isLocked = false, requiredPoints = 0 }: TaskCardProps) => {
+export const TaskCard = ({ id, title, description, deadline, isCompleted, onToggleComplete, isLocked = false }: TaskCardProps) => {
   const handleMarkComplete = () => {
     onToggleComplete(id);
   };
@@ -43,14 +41,10 @@ export const TaskCard = ({ id, title, description, deadline, isCompleted, onTogg
                   <Clock className="h-4 w-4 text-muted-foreground" />
                   <span className="text-muted-foreground">Due: {deadline}</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4 text-yellow-500" />
-                  <span className="text-muted-foreground">{points} points</span>
-                </div>
               </div>
               {isLocked && (
                 <p className="text-xs text-warning">
-                  Requires {requiredPoints} points to unlock
+                  Complete the previous task to unlock this one
                 </p>
               )}
             </div>
