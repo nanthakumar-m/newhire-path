@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Calendar, CheckCircle, Clock, User, Target, BookOpen, Users } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Calendar, CheckCircle, Clock, User, Target, BookOpen, Users, Trophy } from 'lucide-react';
 import { TaskCard } from '@/components/TaskCard';
 import { OnboardingChatbot } from '@/components/OnboardingChatbot';
+import { TicketSystem } from '@/components/TicketSystem';
 import { useAuth } from '@/contexts/AuthContext';
 import { Employee } from '@/types/auth';
 
@@ -12,16 +15,26 @@ export const EmployeeDashboard = () => {
   const { user } = useAuth();
   const currentEmployee = user as Employee;
   const [showChatbot, setShowChatbot] = useState(false);
+  const [showCongratulations, setShowCongratulations] = useState(false);
+  const [allTasksCompleted, setAllTasksCompleted] = useState(false);
 
   useEffect(() => {
     // Show chatbot if mandatory tasks are not completed
     if (currentEmployee && !currentEmployee.mandatoryTasksCompleted) {
       setShowChatbot(true);
     }
+
+    // Check if all tasks are completed
+    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    const completedCount = currentEmployee?.completedTasks?.length || 0;
+    if (completedCount === tasks.length && tasks.length > 0) {
+      setAllTasksCompleted(true);
+    }
   }, [currentEmployee]);
 
   const handleToggleComplete = (taskId: number) => {
     const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
     
     const updatedEmployees = employees.map((emp: Employee) => {
       if (emp.id === currentEmployee.id) {
@@ -31,6 +44,12 @@ export const EmployeeDashboard = () => {
           : emp.completedTasks.filter(id => id !== taskId);
           
         const updatedEmployee = { ...emp, completedTasks: updatedTasks };
+        
+        // Check if all tasks are now completed
+        if (updatedTasks.length === tasks.length && tasks.length > 0) {
+          setShowCongratulations(true);
+        }
+        
         return updatedEmployee;
       }
       return emp;
@@ -71,6 +90,42 @@ export const EmployeeDashboard = () => {
   };
 
   const tasksWithLockStatus = getTasksWithLockStatus();
+
+  // If all tasks are completed, show ticket system
+  if (allTasksCompleted) {
+    return (
+      <>
+        <TicketSystem />
+        
+        <Dialog open={showCongratulations} onOpenChange={setShowCongratulations}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <div className="text-center space-y-4">
+                <div className="mx-auto h-16 w-16 rounded-full bg-green-500/10 flex items-center justify-center">
+                  <Trophy className="h-8 w-8 text-green-600" />
+                </div>
+                <DialogTitle className="text-2xl font-bold text-green-600">
+                  Congratulations! 🎉
+                </DialogTitle>
+              </div>
+            </DialogHeader>
+            <div className="text-center space-y-4">
+              <p className="text-lg">
+                You have successfully completed all your onboarding tasks!
+              </p>
+              <p className="text-muted-foreground">
+                You can now manage your GenC incident tickets using the ticket system.
+              </p>
+              <Button onClick={() => setShowCongratulations(false)} className="w-full">
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Continue to Ticket System
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </>
+    );
+  }
 
   // Show simplified view if mandatory tasks not completed
   if (!currentEmployee?.mandatoryTasksCompleted) {

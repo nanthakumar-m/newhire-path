@@ -21,8 +21,10 @@ import {
   Code,
   TrendingUp,
   AlertCircle,
-  ArrowLeft
+  ArrowLeft,
+  FileText
 } from "lucide-react";
+import { GenCTicketTracking } from "./GenCTicketTracking";
 
 // This will be calculated from localStorage
 
@@ -120,6 +122,7 @@ export const ManagerDashboard = () => {
   const [selectedTask, setSelectedTask] = useState<{ id: number; title: string } | null>(null);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [showTaskForm, setShowTaskForm] = useState(false);
+  const [showTicketTracking, setShowTicketTracking] = useState(false);
   const [employeeStats, setEmployeeStats] = useState({
     total: 0,
     onboarded: 0,
@@ -176,6 +179,10 @@ export const ManagerDashboard = () => {
       default: return "bg-muted/50 border-border";
     }
   };
+
+  if (showTicketTracking) {
+    return <GenCTicketTracking onBack={() => setShowTicketTracking(false)} />;
+  }
 
   if (selectedTask) {
     return (
@@ -335,6 +342,27 @@ export const ManagerDashboard = () => {
           <p className="text-muted-foreground">
             Add new employees to the onboarding system and assign custom tasks to all employees.
           </p>
+        </CardContent>
+      </Card>
+
+      {/* GenC Ticket Tracking */}
+      <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer" onClick={() => setShowTicketTracking(true)}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-secondary/10 flex items-center justify-center">
+              <FileText className="h-5 w-5 text-secondary-foreground" />
+            </div>
+            GenC Ticket Tracking
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground mb-4">
+            Monitor and track all GenC employee ticket submissions and their incident reports.
+          </p>
+          <Button variant="secondary" onClick={() => setShowTicketTracking(true)}>
+            <FileText className="h-4 w-4 mr-2" />
+            View All Tickets
+          </Button>
         </CardContent>
       </Card>
 
