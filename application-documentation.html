@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewHire Path - Employee Onboarding Management System Documentation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            padding: 30px;
+            margin: -40px -40px 40px -40px;
+            border-radius: 12px 12px 0 0;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #16a34a;
+            border-bottom: 3px solid #22c55e;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            font-size: 1.8em;
+        }
+        h3 {
+            color: #059669;
+            margin-top: 30px;
+            font-size: 1.4em;
+        }
+        h4 {
+            color: #047857;
+            margin-top: 25px;
+            font-size: 1.2em;
+        }
+        .overview-box {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 1px solid #22c55e;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .tech-stack {
+            background: #f1f5f9;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .credentials-box {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 14px;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .feature-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .important-note {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .table th, .table td {
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            text-align: left;
+        }
+        .table th {
+            background: #f9fafb;
+            font-weight: 600;
+        }
+        .workflow-step {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        ul, ol {
+            padding-left: 30px;
+        }
+        li {
+            margin: 8px 0;
+        }
+        .highlight {
+            background: #fef3c7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>NewHire Path - Employee Onboarding Management System</h1>
+        
+        <div class="overview-box">
+            <h2>📋 Application Overview</h2>
+            <p><strong>NewHire Path</strong> is a comprehensive employee onboarding platform designed for organizations to streamline the onboarding process. The system supports two distinct user types: <strong>Managers</strong> and <strong>Employees</strong>, each with specialized dashboards and functionality.</p>
+            
+            <p>The platform manages task-based onboarding workflows, ticket submission systems for GenC employees, and provides comprehensive administrative oversight capabilities for managers.</p>
+        </div>
+
+        <div class="tech-stack">
+            <h2>🛠️ Technology Stack</h2>
+            <ul>
+                <li><strong>Frontend Framework:</strong> React 18.3.1 with TypeScript</li>
+                <li><strong>Build Tool:</strong> Vite for fast development and building</li>
+                <li><strong>Styling:</strong> Tailwind CSS with custom design system</li>
+                <li><strong>UI Components:</strong> shadcn/ui component library</li>
+                <li><strong>Routing:</strong> React Router DOM v6.30.1</li>
+                <li><strong>Icons:</strong> Lucide React icon library</li>
+                <li><strong>Data Persistence:</strong> Browser LocalStorage</li>
+                <li><strong>Form Handling:</strong> React Hook Form with Zod validation</li>
+            </ul>
+        </div>
+
+        <h2>🎨 Design System & Theming</h2>
+        
+        <p>The application uses a professional green-based color scheme with HSL color values for consistency:</p>
+        
+        <div class="code-block">/* Custom CSS Variables in src/index.css */
+:root {
+  --primary: 142 76% 36%;         /* Main green theme */
+  --primary-light: 142 70% 45%;   /* Lighter green variant */
+  --primary-lighter: 142 60% 85%; /* Very light green */
+  --primary-dark: 142 80% 28%;    /* Darker green */
+  --success: 142 76% 36%;         /* Success state color */
+  --warning: 45 93% 47%;          /* Warning state color */
+  --destructive: 0 84.2% 60.2%;   /* Error state color */
+  
+  /* Additional shadcn/ui color system variables */
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  /* ... complete shadcn color system */
+}</div>
+
+        <div class="credentials-box">
+            <h2>🔐 Authentication System</h2>
+            <h3>Login Credentials:</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>User Type</th>
+                        <th>Username/ID</th>
+                        <th>Password</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="highlight">Manager</span></td>
+                        <td>12345</td>
+                        <td>manager</td>
+                        <td>Administrative access to all features</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Employees</span></td>
+                        <td>EMP001, EMP002, EMP003</td>
+                        <td>Same as Employee ID</td>
+                        <td>Individual employee dashboards</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>👥 User Types & Data Structure</h2>
+
+        <h3>Employee Interface Definition:</h3>
+        <div class="code-block">interface Employee {
+  id: string;                    // Unique identifier
+  name: string;                  // Full employee name
+  type: 'employee';              // User type classification
+  employeeId: string;            // Employee ID (EMP001, EMP002, etc.)
+  department: string;            // Department assignment
+  onboardingDate: string;        // Start date of onboarding
+  completedTasks: number[];      // Array of completed task IDs
+  mandatoryTasksCompleted: boolean; // Chatbot completion status
+}</div>
+
+        <h3>Sample Employee Data:</h3>
+        <div class="code-block">const sampleEmployees = [
+  {
+    id: '1',
+    name: 'Sarah Johnson',
+    employeeId: 'EMP001',
+    department: 'Engineering',
+    onboardingDate: '2024-01-15',
+    completedTasks: [],
+    mandatoryTasksCompleted: false
+  },
+  {
+    id: '2',
+    name: 'Mike Chen',
+    employeeId: 'EMP002',
+    department: 'Engineering',
+    onboardingDate: '2024-01-20',
+    completedTasks: [],
+    mandatoryTasksCompleted: false
+  },
+  {
+    id: '3',
+    name: 'Emma Davis',
+    employeeId: 'EMP003',
+    department: 'Marketing',
+    onboardingDate: '2024-01-10',
+    completedTasks: [],
+    mandatoryTasksCompleted: false
+  }
+];</div>
+
+        <h3>Onboarding Tasks (10 Total):</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Task ID</th>
+                    <th>Task Name</th>
+                    <th>Deadline</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>Complete System Training</td><td>2024-02-15</td><td>Initial system orientation</td></tr>
+                <tr><td>2</td><td>Setup Development Environment</td><td>2024-02-18</td><td>Configure work tools</td></tr>
+                <tr><td>3</td><td>Review Company Policies</td><td>2024-02-20</td><td>Read and acknowledge policies</td></tr>
+                <tr><td>4</td><td>Attend Team Introduction</td><td>2024-02-22</td><td>Meet team members</td></tr>
+                <tr><td>5</td><td>Complete Security Training</td><td>2024-02-25</td><td>Security protocols training</td></tr>
+                <tr><td>6</td><td>Setup Project Access</td><td>2024-02-28</td><td>Configure project permissions</td></tr>
+                <tr><td>7</td><td>Review Documentation</td><td>2024-03-02</td><td>Study project documentation</td></tr>
+                <tr><td>8</td><td>Complete Compliance Training</td><td>2024-03-05</td><td>Regulatory compliance</td></tr>
+                <tr><td>9</td><td>Submit Initial Assessment</td><td>2024-03-08</td><td>Complete evaluation</td></tr>
+                <tr><td>10</td><td>Schedule Manager Review</td><td>2024-03-10</td><td>Schedule review meeting</td></tr>
+            </tbody>
+        </table>
+
+        <h2>👨‍💼 Employee Dashboard Features</h2>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>🏠 Layout & Header</h3>
+                <ul>
+                    <li>App title: "NewHire Path"</li>
+                    <li>Subtitle: "Employee Onboarding Platform"</li>
+                    <li>User info display with name and role</li>
+                    <li>Logout functionality</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🚀 Initial State</h3>
+                <ul>
+                    <li>Welcome card with onboarding message</li>
+                    <li>Automatic onboarding chatbot launch</li>
+                    <li>Hidden dashboard until chatbot completion</li>
+                    <li>Mandatory tasks completion flow</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>Main Dashboard Components:</h3>
+        
+        <div class="workflow-step">
+            <h4>📊 Stats Cards</h4>
+            <ul>
+                <li><strong>Employee ID:</strong> Display current user's ID</li>
+                <li><strong>Department:</strong> Show assigned department</li>
+                <li><strong>Tasks Completed:</strong> Progress counter (X/10)</li>
+                <li><strong>Progress Percentage:</strong> Visual completion percentage</li>
+            </ul>
+        </div>
+
+        <div class="workflow-step">
+            <h4>📈 Progress Overview</h4>
+            <ul>
+                <li>Visual progress bar with completion statistics</li>
+                <li>Real-time updates based on task completion</li>
+                <li>Color-coded progress indicators</li>
+            </ul>
+        </div>
+
+        <div class="workflow-step">
+            <h4>📋 Task Cards</h4>
+            <ul>
+                <li>Grid layout with responsive design</li>
+                <li>Sequential lock mechanism (tasks unlock in order)</li>
+                <li>Task information: Title, description, deadline</li>
+                <li>Completion status badges</li>
+                <li>Small toggle buttons: "Mark Complete" / "Mark Incomplete"</li>
+            </ul>
+        </div>
+
+        <h3>Task Completion Workflow:</h3>
+        <div class="important-note">
+            <ol>
+                <li><strong>Sequential Unlocking:</strong> Tasks unlock one by one (Task 2 unlocks after Task 1 completion)</li>
+                <li><strong>Progress Tracking:</strong> Real-time progress updates in localStorage</li>
+                <li><strong>Completion Trigger:</strong> When all 10 tasks are completed, show congratulations popup</li>
+                <li><strong>Interface Switch:</strong> After congratulations, switch to Ticket System interface</li>
+                <li><strong>Data Persistence:</strong> All progress saved locally for session continuity</li>
+            </ol>
+        </div>
+
+        <h3>🤖 Onboarding Chatbot Component</h3>
+        <ul>
+            <li>Modal/dialog interface with conversational flow</li>
+            <li>Simulated onboarding conversation for mandatory setup</li>
+            <li>Completion triggers <code>mandatoryTasksCompleted: true</code></li>
+            <li>Unlocks main dashboard functionality</li>
+        </ul>
+
+        <h2>🎫 Ticket System (Post-Task Completion)</h2>
+
+        <p>Once all 10 onboarding tasks are completed, employees access the ticket system with two main sections:</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>➕ Add New Ticket</h3>
+                <h4>Form Fields:</h4>
+                <ul>
+                    <li><strong>Incident ID:</strong> Text input for ticket identifier</li>
+                    <li><strong>Application Name:</strong> Text input for application</li>
+                    <li><strong>Application Group Name:</strong> Text input for group</li>
+                    <li><strong>Deadline Met:</strong> Radio buttons (Yes/No)</li>
+                    <li><strong>Reason for Delay:</strong> Textarea (appears only if "No" selected)</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h3>📊 View Ticket History</h3>
+                <h4>Table Features:</h4>
+                <ul>
+                    <li>All tickets submitted by current employee</li>
+                    <li>Columns: Incident ID, Application Name, Group Name</li>
+                    <li>Deadline Met status and Submitted Date</li>
+                    <li>Sortable and searchable interface</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>Form Submission Flow:</h3>
+        <div class="workflow-step">
+            <ol>
+                <li><strong>Data Entry:</strong> User fills out all required fields</li>
+                <li><strong>Confirmation Popup:</strong> Display all entered data for review</li>
+                <li><strong>Warning Message:</strong> "Are you sure? This cannot be edited further"</li>
+                <li><strong>Data Storage:</strong> Save to localStorage with employee info and timestamp</li>
+                <li><strong>Success Feedback:</strong> Confirmation message and form reset</li>
+            </ol>
+        </div>
+
+        <h2>🏢 Manager Dashboard</h2>
+
+        <h3>📈 Overview Stats Cards</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Description</th>
+                    <th>Calculation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="highlight">Total Employees</span></td>
+                    <td>Total number of employees in system</td>
+                    <td>Count of all employee records</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">Fully Onboarded</span></td>
+                    <td>Employees who completed all 10 tasks</td>
+                    <td>completedTasks.length === 10</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">In Progress</span></td>
+                    <td>Employees with 1-9 completed tasks</td>
+                    <td>1 ≤ completedTasks.length ≤ 9</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">Not Started</span></td>
+                    <td>Employees with 0 completed tasks</td>
+                    <td>completedTasks.length === 0</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>👥 Employee Management Features</h3>
+        <div class="features-grid">
+            <div class="feature-card">
+                <h4>➕ Add New Employees</h4>
+                <ul>
+                    <li>Form to create new employee records</li>
+                    <li>Automatic ID generation</li>
+                    <li>Department assignment</li>
+                    <li>Onboarding date setting</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h4>📋 Task Assignment</h4>
+                <ul>
+                    <li>Assign new tasks to employees</li>
+                    <li>Bulk task assignment capabilities</li>
+                    <li>Task deadline management</li>
+                    <li>Priority setting options</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>📊 Task Completion Grid</h3>
+        <ul>
+            <li><strong>Visual Grid:</strong> All 10 tasks with completion rates</li>
+            <li><strong>Interactive Tiles:</strong> Clickable tiles showing employee completion status</li>
+            <li><strong>Priority Indicators:</strong> High/Medium/Low with color coding</li>
+            <li><strong>Detailed Views:</strong> Click task to see which employees completed it</li>
+        </ul>
+
+        <h3>🎫 GenC Ticket Tracking</h3>
+        <div class="important-note">
+            <h4>Dedicated Manager Section:</h4>
+            <ul>
+                <li><strong>Section Title:</strong> "GenC Ticket Tracking"</li>
+                <li><strong>Master Table:</strong> All submitted tickets from all GenC employees</li>
+                <li><strong>Table Columns:</strong> Employee ID, Employee Name, Incident ID, Application, Group, Deadline Met, Date</li>
+                <li><strong>Interactive Employee ID:</strong> Clickable to show individual employee's ticket history</li>
+                <li><strong>Filtering Options:</strong> Filter by employee, deadline status, date range</li>
+            </ul>
+        </div>
+
+        <h2>🎨 Professional UI Requirements</h2>
+
+        <h3>Design Standards:</h3>
+        <div class="workflow-step">
+            <ul>
+                <li><strong>Aesthetic:</strong> Clean, professional corporate design</li>
+                <li><strong>Backgrounds:</strong> Gradient backgrounds from background to secondary/5</li>
+                <li><strong>Layout:</strong> Card-based layout with subtle shadows</li>
+                <li><strong>Spacing:</strong> Consistent spacing and typography throughout</li>
+                <li><strong>Responsiveness:</strong> Mobile-friendly responsive design</li>
+                <li><strong>Interactions:</strong> Proper hover states and smooth transitions</li>
+            </ul>
+        </div>
+
+        <h3>Component Standards:</h3>
+        <div class="workflow-step">
+            <ul>
+                <li><strong>UI Library:</strong> Use shadcn/ui components exclusively</li>
+                <li><strong>Color System:</strong> Semantic color tokens (no direct colors)</li>
+                <li><strong>Button Styling:</strong> Professional button styling (avoid oversized buttons)</li>
+                <li><strong>Icons:</strong> Consistent icon usage with Lucide React</li>
+                <li><strong>Forms:</strong> Proper form validation and error states</li>
+            </ul>
+        </div>
+
+        <h3>Visual Hierarchy:</h3>
+        <div class="workflow-step">
+            <ul>
+                <li><strong>Headers:</strong> Clear section headers with appropriate icons</li>
+                <li><strong>Contrast:</strong> Proper contrast ratios for accessibility</li>
+                <li><strong>Status Indicators:</strong> Consistent badge usage for status indicators</li>
+                <li><strong>Progress:</strong> Progress bars for completion tracking</li>
+                <li><strong>Tables:</strong> Professional table layouts with proper styling</li>
+            </ul>
+        </div>
+
+        <h2>⚙️ Key Behavioral Requirements</h2>
+
+        <div class="important-note">
+            <h3>Critical System Behaviors:</h3>
+            <ol>
+                <li><strong>Sequential Task Unlocking:</strong> No skipping ahead - tasks unlock in strict order</li>
+                <li><strong>Data Persistence:</strong> LocalStorage maintains data across browser sessions</li>
+                <li><strong>Real-time Statistics:</strong> Stats calculate dynamically based on employee data</li>
+                <li><strong>State Management:</strong> Proper state management ensures UI re-renders correctly</li>
+                <li><strong>Confirmation Dialogs:</strong> Critical actions require user confirmation</li>
+                <li><strong>Error Handling:</strong> Professional error handling with user-friendly feedback</li>
+                <li><strong>Performance:</strong> Efficient rendering and minimal unnecessary re-renders</li>
+            </ol>
+        </div>
+
+        <h2>📁 File Structure & Architecture</h2>
+
+        <div class="code-block">src/
+├── types/
+│   ├── auth.ts              # User and authentication interfaces
+│   └── ticket.ts            # Ticket system interfaces
+├── contexts/
+│   └── AuthContext.tsx      # Authentication state management
+├── components/
+│   ├── EmployeeDashboard.tsx    # Main employee interface
+│   ├── ManagerDashboard.tsx     # Manager oversight dashboard
+│   ├── TaskCard.tsx             # Individual task display component
+│   ├── OnboardingChatbot.tsx    # Chatbot interface component
+│   ├── TicketSystem.tsx         # Post-completion ticket interface
+│   ├── AddTicketForm.tsx        # Ticket submission form
+│   ├── ViewTickets.tsx          # Ticket history table
+│   ├── GenCTicketTracking.tsx   # Manager ticket oversight
+│   └── ui/                      # shadcn/ui components
+├── pages/
+│   ├── Index.tsx            # Main application routing
+│   ├── Login.tsx            # Authentication page
+│   └── NotFound.tsx         # 404 error page
+├── hooks/
+│   └── use-toast.ts         # Toast notification hook
+├── lib/
+│   └── utils.ts             # Utility functions
+├── index.css                # Design system and global styles
+└── main.tsx                 # Application entry point</div>
+
+        <h2>🚀 Implementation Instructions</h2>
+
+        <div class="workflow-step">
+            <h3>Step-by-Step Development Process:</h3>
+            <ol>
+                <li><strong>Project Setup:</strong> Initialize React + TypeScript + Vite project</li>
+                <li><strong>Dependencies:</strong> Install shadcn/ui, React Router, and required packages</li>
+                <li><strong>Design System:</strong> Configure Tailwind with custom color scheme</li>
+                <li><strong>Authentication:</strong> Implement login system with user context</li>
+                <li><strong>Employee Dashboard:</strong> Build progressive task completion interface</li>
+                <li><strong>Manager Dashboard:</strong> Create administrative oversight interface</li>
+                <li><strong>Ticket System:</strong> Implement post-onboarding ticket functionality</li>
+                <li><strong>Data Management:</strong> Set up localStorage persistence</li>
+                <li><strong>UI Polish:</strong> Apply professional styling and responsive design</li>
+                <li><strong>Testing:</strong> Verify all workflows and edge cases</li>
+            </ol>
+        </div>
+
+        <div class="important-note">
+            <h3>🎯 Success Criteria</h3>
+            <p>The completed application should provide a seamless onboarding experience with:</p>
+            <ul>
+                <li>Intuitive user interfaces for both employees and managers</li>
+                <li>Robust task progression system with proper validation</li>
+                <li>Comprehensive ticket management for post-onboarding activities</li>
+                <li>Professional design that reflects corporate standards</li>
+                <li>Reliable data persistence and state management</li>
+                <li>Mobile-responsive design for accessibility</li>
+            </ul>
+        </div>
+
+        <footer style="margin-top: 60px; padding-top: 30px; border-top: 2px solid #e5e7eb; text-align: center; color: #6b7280;">
+            <p><strong>NewHire Path Documentation</strong> - Complete Implementation Guide</p>
+            <p>Generated on: <script>document.write(new Date().toLocaleDateString());</script></p>
+        </footer>
+    </div>
+</body>
+</html>
