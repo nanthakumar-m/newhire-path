@@ -24,14 +24,11 @@ export const AddEmployeeForm = ({ onEmployeeAdded }: AddEmployeeFormProps) => {
   const { toast } = useToast();
 
   const departments = [
-    'Engineering',
-    'Marketing',
-    'Sales',
-    'HR',
-    'Finance',
-    'Operations',
-    'Design',
-    'Legal'
+    'ADM',
+    'DE', 
+    'SAP',
+    'IoT',
+    'QEA'
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
