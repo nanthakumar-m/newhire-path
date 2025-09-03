@@ -27,15 +27,15 @@ export const GenCTicketTracking = ({ onBack }: GenCTicketTrackingProps) => {
     return new Date(dateString).toLocaleString();
   };
 
-  const getEmployeeTickets = (employeeId: string) => {
-    return tickets.filter(ticket => ticket.employeeId === employeeId);
+  const getEmployeeTickets = (associateId: string) => {
+    return tickets.filter(ticket => ticket.associateId === associateId);
   };
 
-  const uniqueEmployees = Array.from(new Set(tickets.map(ticket => ticket.employeeId)));
+  const uniqueEmployees = Array.from(new Set(tickets.map(ticket => ticket.associateId)));
 
   if (selectedEmployee) {
     const employeeTickets = getEmployeeTickets(selectedEmployee);
-    const employeeName = employeeTickets[0]?.employeeName || 'Unknown Employee';
+    const employeeName = employeeTickets[0]?.associateName || 'Unknown Associate';
 
     return (
       <div className="space-y-6">
@@ -51,7 +51,7 @@ export const GenCTicketTracking = ({ onBack }: GenCTicketTrackingProps) => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="h-5 w-5" />
-              Employee ID: {selectedEmployee} | Total Tickets: {employeeTickets.length}
+              Associate ID: {selectedEmployee} | Total Tickets: {employeeTickets.length}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -60,10 +60,12 @@ export const GenCTicketTracking = ({ onBack }: GenCTicketTrackingProps) => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Incident ID</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Priority</TableHead>
                     <TableHead>Application Name</TableHead>
-                    <TableHead>Application Group</TableHead>
-                    <TableHead>Deadline Status</TableHead>
-                    <TableHead>Submitted At</TableHead>
+                    <TableHead>Assigned Group</TableHead>
+                    <TableHead>Ticket Status</TableHead>
+                    <TableHead>SLA Met</TableHead>
                     <TableHead>Reason</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -71,14 +73,24 @@ export const GenCTicketTracking = ({ onBack }: GenCTicketTrackingProps) => {
                   {employeeTickets.map((ticket) => (
                     <TableRow key={ticket.id}>
                       <TableCell className="font-mono">{ticket.incidentId}</TableCell>
+                      <TableCell>{ticket.customer}</TableCell>
+                      <TableCell>{ticket.priority}</TableCell>
                       <TableCell>{ticket.applicationName}</TableCell>
-                      <TableCell>{ticket.applicationGroupName}</TableCell>
+                      <TableCell>{ticket.assignedGroup}</TableCell>
                       <TableCell>
-                        <Badge variant={ticket.deadlineMet ? "default" : "destructive"}>
-                          {ticket.deadlineMet ? "Met" : "Not Met"}
+                        <Badge variant={ticket.ticketStatus === 'Resolved' ? "default" : "destructive"}>
+                          {ticket.ticketStatus}
                         </Badge>
                       </TableCell>
-                      <TableCell>{formatDate(ticket.submittedAt)}</TableCell>
+                      <TableCell>
+                        {ticket.ticketStatus === 'Resolved' ? (
+                          <Badge variant={ticket.slaMet ? "default" : "destructive"}>
+                            {ticket.slaMet ? "Yes" : "No"}
+                          </Badge>
+                        ) : (
+                          <span className="text-muted-foreground">-</span>
+                        )}
+                      </TableCell>
                       <TableCell className="max-w-xs">
                         {ticket.reasonForDelay ? (
                           <span className="text-sm text-muted-foreground">
@@ -130,13 +142,12 @@ export const GenCTicketTracking = ({ onBack }: GenCTicketTrackingProps) => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Employee ID</TableHead>
-                    <TableHead>Employee Name</TableHead>
+                    <TableHead>Associate ID</TableHead>
+                    <TableHead>Associate Name</TableHead>
                     <TableHead>Incident ID</TableHead>
-                    <TableHead>Application Name</TableHead>
-                    <TableHead>Application Group</TableHead>
-                    <TableHead>Deadline Status</TableHead>
-                    <TableHead>Submitted At</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Priority</TableHead>
+                    <TableHead>Ticket Status</TableHead>
                     <TableHead>Reason</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -146,22 +157,29 @@ export const GenCTicketTracking = ({ onBack }: GenCTicketTrackingProps) => {
                       <TableCell>
                         <Button 
                           variant="link" 
-                          onClick={() => setSelectedEmployee(ticket.employeeId)}
+                          onClick={() => setSelectedEmployee(ticket.associateId)}
                           className="p-0 h-auto font-mono text-primary hover:underline"
                         >
-                          {ticket.employeeId}
+                          {ticket.associateId}
                         </Button>
                       </TableCell>
-                      <TableCell>{ticket.employeeName}</TableCell>
-                      <TableCell className="font-mono">{ticket.incidentId}</TableCell>
-                      <TableCell>{ticket.applicationName}</TableCell>
-                      <TableCell>{ticket.applicationGroupName}</TableCell>
                       <TableCell>
-                        <Badge variant={ticket.deadlineMet ? "default" : "destructive"}>
-                          {ticket.deadlineMet ? "Met" : "Not Met"}
+                        <Button 
+                          variant="link" 
+                          onClick={() => setSelectedEmployee(ticket.associateId)}
+                          className="p-0 h-auto text-primary hover:underline"
+                        >
+                          {ticket.associateName}
+                        </Button>
+                      </TableCell>
+                      <TableCell className="font-mono">{ticket.incidentId}</TableCell>
+                      <TableCell>{ticket.customer}</TableCell>
+                      <TableCell>{ticket.priority}</TableCell>
+                      <TableCell>
+                        <Badge variant={ticket.ticketStatus === 'Resolved' ? "default" : "destructive"}>
+                          {ticket.ticketStatus}
                         </Badge>
                       </TableCell>
-                      <TableCell>{formatDate(ticket.submittedAt)}</TableCell>
                       <TableCell className="max-w-xs">
                         {ticket.reasonForDelay ? (
                           <span className="text-sm text-muted-foreground">

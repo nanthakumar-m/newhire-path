@@ -19,10 +19,15 @@ export const AddTicketForm = ({ onBack }: AddTicketFormProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [formData, setFormData] = useState<TicketFormData>({
+    associateId: user?.employeeId || '',
+    associateName: user?.name || '',
     incidentId: '',
+    customer: '',
+    assignedGroup: '',
+    priority: '',
     applicationName: '',
-    applicationGroupName: '',
-    deadlineMet: true,
+    ticketStatus: 'Resolved',
+    slaMet: true,
     reasonForDelay: ''
   });
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -36,7 +41,7 @@ export const AddTicketForm = ({ onBack }: AddTicketFormProps) => {
 
   const handleSubmit = () => {
     // Validation
-    if (!formData.incidentId || !formData.applicationName || !formData.applicationGroupName) {
+    if (!formData.incidentId || !formData.customer || !formData.assignedGroup || !formData.priority || !formData.applicationName) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields",
@@ -45,10 +50,19 @@ export const AddTicketForm = ({ onBack }: AddTicketFormProps) => {
       return;
     }
 
-    if (!formData.deadlineMet && !formData.reasonForDelay) {
+    if (formData.ticketStatus === 'Resolved' && !formData.slaMet && !formData.reasonForDelay) {
       toast({
         title: "Validation Error", 
-        description: "Please provide a reason for not meeting the deadline",
+        description: "Please provide a reason for not meeting SLA",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (formData.ticketStatus === 'Canceled' && !formData.reasonForDelay) {
+      toast({
+        title: "Validation Error", 
+        description: "Please provide a reason for cancellation",
         variant: "destructive"
       });
       return;
@@ -60,8 +74,6 @@ export const AddTicketForm = ({ onBack }: AddTicketFormProps) => {
   const confirmSubmit = () => {
     const newTicket: Ticket = {
       id: Date.now().toString(),
-      employeeId: user?.id || '',
-      employeeName: user?.name || '',
       ...formData,
       submittedAt: new Date().toISOString()
     };
@@ -95,6 +107,28 @@ export const AddTicketForm = ({ onBack }: AddTicketFormProps) => {
           <CardTitle>Incident Ticket Form</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="associateId">Associate ID *</Label>
+              <Input
+                id="associateId"
+                value={formData.associateId}
+                onChange={(e) => handleInputChange('associateId', e.target.value)}
+                placeholder="Enter associate ID"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="associateName">Associate Name *</Label>
+              <Input
+                id="associateName"
+                value={formData.associateName}
+                onChange={(e) => handleInputChange('associateName', e.target.value)}
+                placeholder="Enter associate name"
+              />
+            </div>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="incidentId">Incident ID *</Label>
             <Input
@@ -105,51 +139,96 @@ export const AddTicketForm = ({ onBack }: AddTicketFormProps) => {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="applicationName">Application Name *</Label>
-            <Input
-              id="applicationName"
-              value={formData.applicationName}
-              onChange={(e) => handleInputChange('applicationName', e.target.value)}
-              placeholder="Enter application name"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="customer">Customer *</Label>
+              <Input
+                id="customer"
+                value={formData.customer}
+                onChange={(e) => handleInputChange('customer', e.target.value)}
+                placeholder="Enter customer name"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="assignedGroup">Assigned Group *</Label>
+              <Input
+                id="assignedGroup"
+                value={formData.assignedGroup}
+                onChange={(e) => handleInputChange('assignedGroup', e.target.value)}
+                placeholder="Enter assigned group"
+              />
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="applicationGroupName">Application Group Name *</Label>
-            <Input
-              id="applicationGroupName"
-              value={formData.applicationGroupName}
-              onChange={(e) => handleInputChange('applicationGroupName', e.target.value)}
-              placeholder="Enter application group name"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="priority">Priority *</Label>
+              <Input
+                id="priority"
+                value={formData.priority}
+                onChange={(e) => handleInputChange('priority', e.target.value)}
+                placeholder="Enter priority (e.g., High, Medium, Low)"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="applicationName">Application Name *</Label>
+              <Input
+                id="applicationName"
+                value={formData.applicationName}
+                onChange={(e) => handleInputChange('applicationName', e.target.value)}
+                placeholder="Project name"
+              />
+            </div>
           </div>
 
           <div className="space-y-3">
-            <Label>Deadline Status *</Label>
+            <Label>Ticket Status *</Label>
             <RadioGroup 
-              value={formData.deadlineMet.toString()} 
-              onValueChange={(value) => handleInputChange('deadlineMet', value === 'true')}
+              value={formData.ticketStatus} 
+              onValueChange={(value) => handleInputChange('ticketStatus', value as 'Resolved' | 'Canceled')}
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="true" id="deadline-met" />
-                <Label htmlFor="deadline-met">Deadline Met</Label>
+                <RadioGroupItem value="Resolved" id="resolved" />
+                <Label htmlFor="resolved">Resolved</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="false" id="deadline-not-met" />
-                <Label htmlFor="deadline-not-met">Deadline Not Met</Label>
+                <RadioGroupItem value="Canceled" id="canceled" />
+                <Label htmlFor="canceled">Canceled</Label>
               </div>
             </RadioGroup>
           </div>
 
-          {!formData.deadlineMet && (
+          {formData.ticketStatus === 'Resolved' && (
+            <div className="space-y-3">
+              <Label>SLA Met *</Label>
+              <RadioGroup 
+                value={formData.slaMet?.toString()} 
+                onValueChange={(value) => handleInputChange('slaMet', value === 'true')}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="true" id="sla-met" />
+                  <Label htmlFor="sla-met">SLA Met</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="false" id="sla-not-met" />
+                  <Label htmlFor="sla-not-met">SLA Not Met</Label>
+                </div>
+              </RadioGroup>
+            </div>
+          )}
+
+          {((formData.ticketStatus === 'Resolved' && formData.slaMet === false) || formData.ticketStatus === 'Canceled') && (
             <div className="space-y-2">
-              <Label htmlFor="reasonForDelay">Reason for Not Completion *</Label>
+              <Label htmlFor="reasonForDelay">
+                {formData.ticketStatus === 'Canceled' ? 'Reason for Cancellation *' : 'Reason for SLA Not Met *'}
+              </Label>
               <Textarea
                 id="reasonForDelay"
                 value={formData.reasonForDelay || ''}
                 onChange={(e) => handleInputChange('reasonForDelay', e.target.value)}
-                placeholder="Please explain why the deadline was not met"
+                placeholder={formData.ticketStatus === 'Canceled' ? 'Please explain why the ticket was canceled' : 'Please explain why SLA was not met'}
                 rows={3}
               />
             </div>
@@ -172,11 +251,18 @@ export const AddTicketForm = ({ onBack }: AddTicketFormProps) => {
               Please review your ticket details. Once submitted, this cannot be edited.
             </p>
             <div className="space-y-2 text-sm">
+              <div><strong>Associate ID:</strong> {formData.associateId}</div>
+              <div><strong>Associate Name:</strong> {formData.associateName}</div>
               <div><strong>Incident ID:</strong> {formData.incidentId}</div>
+              <div><strong>Customer:</strong> {formData.customer}</div>
+              <div><strong>Assigned Group:</strong> {formData.assignedGroup}</div>
+              <div><strong>Priority:</strong> {formData.priority}</div>
               <div><strong>Application Name:</strong> {formData.applicationName}</div>
-              <div><strong>Application Group:</strong> {formData.applicationGroupName}</div>
-              <div><strong>Deadline Status:</strong> {formData.deadlineMet ? 'Met' : 'Not Met'}</div>
-              {!formData.deadlineMet && (
+              <div><strong>Ticket Status:</strong> {formData.ticketStatus}</div>
+              {formData.ticketStatus === 'Resolved' && (
+                <div><strong>SLA Met:</strong> {formData.slaMet ? 'Yes' : 'No'}</div>
+              )}
+              {formData.reasonForDelay && (
                 <div><strong>Reason:</strong> {formData.reasonForDelay}</div>
               )}
             </div>

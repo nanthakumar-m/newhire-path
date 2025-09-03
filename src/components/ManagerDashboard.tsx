@@ -29,93 +29,16 @@ import { GenCTicketTracking } from "./GenCTicketTracking";
 // This will be calculated from localStorage
 
 const taskStats = [
-  {
-    id: 1,
-    title: "Safety Course",
-    icon: Shield,
-    completed: 20,
-    total: 24,
-    priority: "high" as const,
-  },
-  {
-    id: 2,
-    title: "IT Access Setup",
-    icon: Laptop,
-    completed: 22,
-    total: 24,
-    priority: "high" as const,
-  },
-  {
-    id: 3,
-    title: "Manager Meetings",
-    icon: MessageSquare,
-    completed: 18,
-    total: 24,
-    priority: "high" as const,
-  },
-  {
-    id: 4,
-    title: "HR Documentation",
-    icon: Users,
-    completed: 24,
-    total: 24,
-    priority: "high" as const,
-  },
-  {
-    id: 5,
-    title: "Team Introductions",
-    icon: Building,
-    completed: 16,
-    total: 24,
-    priority: "medium" as const,
-  },
-  {
-    id: 6,
-    title: "Culture Overview",
-    icon: Heart,
-    completed: 19,
-    total: 24,
-    priority: "medium" as const,
-  },
-  {
-    id: 7,
-    title: "Security Training",
-    icon: Shield,
-    completed: 21,
-    total: 24,
-    priority: "high" as const,
-  },
-  {
-    id: 8,
-    title: "Office Tour",
-    icon: Building,
-    completed: 15,
-    total: 24,
-    priority: "low" as const,
-  },
-  {
-    id: 9,
-    title: "Benefits Session",
-    icon: Heart,
-    completed: 17,
-    total: 24,
-    priority: "medium" as const,
-  },
-  {
-    id: 10,
-    title: "Dev Environment",
-    icon: Code,
-    completed: 14,
-    total: 24,
-    priority: "high" as const,
-  },
-];
-
-const recentActivity = [
-  { employee: "Sarah Johnson", task: "Completed Safety Course", time: "2 hours ago", type: "completed" },
-  { employee: "Mike Chen", task: "Started IT Access Setup", time: "3 hours ago", type: "started" },
-  { employee: "Emma Davis", task: "Scheduled Manager Meeting", time: "5 hours ago", type: "scheduled" },
-  { employee: "Alex Rodriguez", task: "Completed HR Documentation", time: "1 day ago", type: "completed" },
+  { id: 1, title: "Cargill Onboarding", icon: Shield, completed: 20, total: 24, priority: "high" as const },
+  { id: 2, title: "AWS", icon: Code, completed: 22, total: 24, priority: "high" as const },
+  { id: 3, title: "Gen AI", icon: TrendingUp, completed: 18, total: 24, priority: "high" as const },
+  { id: 4, title: "CyberSecurity", icon: Shield, completed: 24, total: 24, priority: "high" as const },
+  { id: 5, title: "Cargill Mandatory Course 1", icon: BookOpen, completed: 16, total: 24, priority: "medium" as const },
+  { id: 6, title: "Cargill Mandatory Course 2", icon: BookOpen, completed: 19, total: 24, priority: "medium" as const },
+  { id: 7, title: "Cargill Mandatory Course 3", icon: BookOpen, completed: 21, total: 24, priority: "medium" as const },
+  { id: 8, title: "Complete KT", icon: Users, completed: 15, total: 24, priority: "high" as const },
+  { id: 9, title: "Complete Reverse KT", icon: MessageSquare, completed: 17, total: 24, priority: "high" as const },
+  { id: 10, title: "System Integration Training", icon: Laptop, completed: 14, total: 24, priority: "medium" as const },
 ];
 
 export const ManagerDashboard = () => {
@@ -138,10 +61,10 @@ export const ManagerDashboard = () => {
     const storedEmployees = JSON.parse(localStorage.getItem('employees') || '[]');
     setEmployees(storedEmployees);
     
-    // Calculate stats
+    // Calculate stats - update to check for Reverse KT completion (task 9)
     const total = storedEmployees.length;
-    const onboarded = storedEmployees.filter((emp: Employee) => emp.completedTasks.length === 10).length;
-    const inProgress = storedEmployees.filter((emp: Employee) => emp.completedTasks.length > 0 && emp.completedTasks.length < 10).length;
+    const onboarded = storedEmployees.filter((emp: Employee) => emp.completedTasks.includes(9)).length;
+    const inProgress = storedEmployees.filter((emp: Employee) => emp.completedTasks.length > 0 && !emp.completedTasks.includes(9)).length;
     const notStarted = storedEmployees.filter((emp: Employee) => emp.completedTasks.length === 0).length;
 
     setEmployeeStats({ total, onboarded, inProgress, notStarted });
@@ -240,7 +163,7 @@ export const ManagerDashboard = () => {
               </div>
               <EmployeeListTable 
                 title="Fully Onboarded Employees" 
-                employees={employees.filter(emp => emp.completedTasks.length === 10)} 
+                employees={employees.filter(emp => emp.completedTasks.includes(9))} 
                 type="onboarded" 
               />
             </div>
@@ -260,7 +183,7 @@ export const ManagerDashboard = () => {
               </div>
               <EmployeeListTable 
                 title="In Progress Employees" 
-                employees={employees.filter(emp => emp.completedTasks.length > 0 && emp.completedTasks.length < 10)} 
+                employees={employees.filter(emp => emp.completedTasks.length > 0 && !emp.completedTasks.includes(9))} 
                 type="in-progress" 
               />
             </div>
@@ -403,30 +326,6 @@ export const ManagerDashboard = () => {
           })}
         </div>
       </div>
-
-      {/* Recent Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {recentActivity.map((activity, index) => (
-              <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-muted/30">
-                <div className={`w-2 h-2 rounded-full ${
-                  activity.type === 'completed' ? 'bg-success' :
-                  activity.type === 'started' ? 'bg-warning' : 'bg-primary'
-                }`} />
-                <div className="flex-1">
-                  <p className="font-medium text-sm">{activity.employee}</p>
-                  <p className="text-sm text-muted-foreground">{activity.task}</p>
-                </div>
-                <span className="text-xs text-muted-foreground">{activity.time}</span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
 
       <TaskAssignmentForm 
         isOpen={showTaskForm}

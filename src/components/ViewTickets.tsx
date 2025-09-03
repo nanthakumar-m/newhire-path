@@ -21,7 +21,7 @@ export const ViewTickets = ({ onBack }: ViewTicketsProps) => {
 
   const loadTickets = () => {
     const allTickets = JSON.parse(localStorage.getItem('tickets') || '[]');
-    const userTickets = allTickets.filter((ticket: Ticket) => ticket.employeeId === user?.id);
+    const userTickets = allTickets.filter((ticket: Ticket) => ticket.associateId === user?.employeeId);
     setTickets(userTickets);
   };
 
@@ -59,10 +59,12 @@ export const ViewTickets = ({ onBack }: ViewTicketsProps) => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Incident ID</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Priority</TableHead>
                     <TableHead>Application Name</TableHead>
-                    <TableHead>Application Group</TableHead>
-                    <TableHead>Deadline Status</TableHead>
-                    <TableHead>Submitted At</TableHead>
+                    <TableHead>Assigned Group</TableHead>
+                    <TableHead>Ticket Status</TableHead>
+                    <TableHead>SLA Met</TableHead>
                     <TableHead>Reason</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -70,14 +72,24 @@ export const ViewTickets = ({ onBack }: ViewTicketsProps) => {
                   {tickets.map((ticket) => (
                     <TableRow key={ticket.id}>
                       <TableCell className="font-mono">{ticket.incidentId}</TableCell>
+                      <TableCell>{ticket.customer}</TableCell>
+                      <TableCell>{ticket.priority}</TableCell>
                       <TableCell>{ticket.applicationName}</TableCell>
-                      <TableCell>{ticket.applicationGroupName}</TableCell>
+                      <TableCell>{ticket.assignedGroup}</TableCell>
                       <TableCell>
-                        <Badge variant={ticket.deadlineMet ? "default" : "destructive"}>
-                          {ticket.deadlineMet ? "Met" : "Not Met"}
+                        <Badge variant={ticket.ticketStatus === 'Resolved' ? "default" : "destructive"}>
+                          {ticket.ticketStatus}
                         </Badge>
                       </TableCell>
-                      <TableCell>{formatDate(ticket.submittedAt)}</TableCell>
+                      <TableCell>
+                        {ticket.ticketStatus === 'Resolved' ? (
+                          <Badge variant={ticket.slaMet ? "default" : "destructive"}>
+                            {ticket.slaMet ? "Yes" : "No"}
+                          </Badge>
+                        ) : (
+                          <span className="text-muted-foreground">-</span>
+                        )}
+                      </TableCell>
                       <TableCell className="max-w-xs">
                         {ticket.reasonForDelay ? (
                           <span className="text-sm text-muted-foreground">

@@ -19,15 +19,32 @@ export const EmployeeDashboard = () => {
   const [allTasksCompleted, setAllTasksCompleted] = useState(false);
 
   useEffect(() => {
+    // Initialize tasks if not present
+    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    if (tasks.length === 0) {
+      const newTasks = [
+        { id: 1, name: 'Cargill Onboarding', deadline: '2024-02-15' },
+        { id: 2, name: 'AWS', deadline: '2024-02-18' },
+        { id: 3, name: 'Gen AI', deadline: '2024-02-20' },
+        { id: 4, name: 'CyberSecurity', deadline: '2024-02-22' },
+        { id: 5, name: 'Cargill Mandatory Course 1', deadline: '2024-02-25' },
+        { id: 6, name: 'Cargill Mandatory Course 2', deadline: '2024-02-28' },
+        { id: 7, name: 'Cargill Mandatory Course 3', deadline: '2024-03-02' },
+        { id: 8, name: 'Complete KT', deadline: '2024-03-05' },
+        { id: 9, name: 'Complete Reverse KT', deadline: '2024-03-08' },
+        { id: 10, name: 'System Integration Training', deadline: '2024-03-10' }
+      ];
+      localStorage.setItem('tasks', JSON.stringify(newTasks));
+    }
+
     // Show chatbot if mandatory tasks are not completed
     if (currentEmployee && !currentEmployee.mandatoryTasksCompleted) {
       setShowChatbot(true);
     }
 
-    // Check if all tasks are completed
-    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-    const completedCount = currentEmployee?.completedTasks?.length || 0;
-    if (completedCount === tasks.length && tasks.length > 0) {
+    // Check if Reverse KT (task 9) is completed to show tickets
+    const completedTasks = currentEmployee?.completedTasks || [];
+    if (completedTasks.includes(9)) {
       setAllTasksCompleted(true);
     }
   }, [currentEmployee]);
@@ -45,8 +62,9 @@ export const EmployeeDashboard = () => {
           
         const updatedEmployee = { ...emp, completedTasks: updatedTasks };
         
-        // Check if all tasks are now completed
-        if (updatedTasks.length === tasks.length && tasks.length > 0) {
+        // Check if Reverse KT (task 9) is completed to show tickets
+        if (updatedTasks.includes(9)) {
+          setAllTasksCompleted(true);
           setShowCongratulations(true);
         }
         

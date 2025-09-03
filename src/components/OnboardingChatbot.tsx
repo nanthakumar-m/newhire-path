@@ -16,17 +16,17 @@ const mandatoryTasks = [
   },
   {
     id: 'personal_details',
-    question: 'Have you completed the personal details updation in XYZ portal?',
-    yesResponse: "Perfect! Your personal details are now updated.",
-    noResponse: 'Please navigate to XYZ portal and complete your personal details update.',
-    noAction: 'Please complete this task and come back to continue.'
+    question: 'Have you updated your personal details in People Soft HCM site?',
+    yesResponse: "Perfect! Your personal details are now updated in People Soft HCM.",
+    noResponse: 'Please navigate to People Soft HCM site and complete your personal details update.',
+    noAction: 'Please reach out to your manager and ask for assistance with People Soft HCM access.'
   },
   {
-    id: 'security_training',
-    question: 'Have you completed the mandatory security training module?',
-    yesResponse: "Excellent! You're now security-compliant.",
-    noResponse: 'Please complete the security training module from the learning portal.',
-    noAction: 'Please complete the security training and return to continue.'
+    id: 'vdi_access',
+    question: 'Have you requested VDI access?',
+    yesResponse: "Excellent! Your VDI access request is in progress.",
+    noResponse: 'Please reach out to your manager and request VDI access.',
+    noAction: 'Please contact your manager to get VDI access and return to continue.'
   }
 ];
 
