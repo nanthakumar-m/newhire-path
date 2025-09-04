@@ -19,25 +19,22 @@ export const EmployeeDashboard = () => {
   const [allTasksCompleted, setAllTasksCompleted] = useState(false);
 
   useEffect(() => {
-    // Initialize tasks if not present
-    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-    if (tasks.length === 0) {
-      const newTasks = [
-        { id: 1, name: 'Basic Profile Setup', deadline: '2024-02-10' },
-        { id: 2, name: 'People Soft HCM Update', deadline: '2024-02-12' },
-        { id: 3, name: 'VDI Access Request', deadline: '2024-02-14' },
-        { id: 4, name: 'Cargill Onboarding', deadline: '2024-02-15' },
-        { id: 5, name: 'AWS', deadline: '2024-02-18' },
-        { id: 6, name: 'Gen AI', deadline: '2024-02-20' },
-        { id: 7, name: 'CyberSecurity', deadline: '2024-02-22' },
-        { id: 8, name: 'Cargill Mandatory Course 1', deadline: '2024-02-25' },
-        { id: 9, name: 'Cargill Mandatory Course 2', deadline: '2024-02-28' },
-        { id: 10, name: 'Cargill Mandatory Course 3', deadline: '2024-03-02' },
-        { id: 11, name: 'Complete KT', deadline: '2024-03-05' },
-        { id: 12, name: 'Complete Reverse KT', deadline: '2024-03-08' }
-      ];
-      localStorage.setItem('tasks', JSON.stringify(newTasks));
-    }
+    // Clear and reinitialize tasks with correct names
+    const newTasks = [
+      { id: 1, name: 'Basic Profile Setup', deadline: '2024-02-10' },
+      { id: 2, name: 'People Soft HCM Update', deadline: '2024-02-12' },
+      { id: 3, name: 'VDI Access Request', deadline: '2024-02-14' },
+      { id: 4, name: 'Cargill Onboarding', deadline: '2024-02-15' },
+      { id: 5, name: 'AWS', deadline: '2024-02-18' },
+      { id: 6, name: 'Gen AI', deadline: '2024-02-20' },
+      { id: 7, name: 'CyberSecurity', deadline: '2024-02-22' },
+      { id: 8, name: 'Cargill Mandatory Course 1', deadline: '2024-02-25' },
+      { id: 9, name: 'Cargill Mandatory Course 2', deadline: '2024-02-28' },
+      { id: 10, name: 'Cargill Mandatory Course 3', deadline: '2024-03-02' },
+      { id: 11, name: 'Complete KT', deadline: '2024-03-05' },
+      { id: 12, name: 'Complete Reverse KT', deadline: '2024-03-08' }
+    ];
+    localStorage.setItem('tasks', JSON.stringify(newTasks));
 
     // Show chatbot if mandatory tasks are not completed
     if (currentEmployee && !currentEmployee.mandatoryTasksCompleted) {
