@@ -157,7 +157,7 @@ export const EmployeeDashboard = () => {
               <Users className="h-10 w-10 text-primary" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-2xl font-bold text-foreground">Welcome to Onboarding!</h3>
+              <h3 className="text-2xl font-bold text-foreground">Welcome to Cargill!</h3>
               <p className="text-muted-foreground">
                 Let's get you started with your journey. Complete the setup process to access your personalized dashboard.
               </p>
@@ -180,7 +180,7 @@ export const EmployeeDashboard = () => {
         {/* Header Section */}
         <div className="text-center space-y-3 py-6">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Welcome, {currentEmployee?.name}
+            Welcome to Cargill, {currentEmployee?.name}
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Complete your onboarding journey and unlock your full potential with our step-by-step process
