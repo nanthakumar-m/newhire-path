@@ -29,7 +29,7 @@ import { GenCTicketTracking } from "./GenCTicketTracking";
 // This will be calculated from localStorage
 
 const taskStats = [
-  { id: 1, title: "Basic Profile Setup", icon: Users, completed: 20, total: 24, priority: "high" as const },
+  { id: 1, title: "ODC Access", icon: Users, completed: 20, total: 24, priority: "high" as const },
   { id: 2, title: "People Soft HCM Update", icon: Building, completed: 22, total: 24, priority: "high" as const },
   { id: 3, title: "VDI Access Request", icon: Laptop, completed: 18, total: 24, priority: "high" as const },
   { id: 4, title: "Cargill Onboarding", icon: Shield, completed: 20, total: 24, priority: "high" as const },

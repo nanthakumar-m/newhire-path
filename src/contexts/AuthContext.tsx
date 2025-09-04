@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const existingTasks = localStorage.getItem('tasks');
     if (!existingTasks) {
       const sampleTasks = [
-        { id: 1, name: 'Basic Profile Setup', deadline: '2024-02-10' },
+        { id: 1, name: 'ODC Access', deadline: '2024-02-10' },
         { id: 2, name: 'People Soft HCM Update', deadline: '2024-02-12' },
         { id: 3, name: 'VDI Access Request', deadline: '2024-02-14' },
         { id: 4, name: 'Cargill Onboarding', deadline: '2024-02-15' },

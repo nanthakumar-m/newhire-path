@@ -21,7 +21,7 @@ export const EmployeeDashboard = () => {
   useEffect(() => {
     // Clear and reinitialize tasks with correct names
     const newTasks = [
-      { id: 1, name: 'Basic Profile Setup', deadline: '2024-02-10' },
+      { id: 1, name: 'ODC Access', deadline: '2024-02-10' },
       { id: 2, name: 'People Soft HCM Update', deadline: '2024-02-12' },
       { id: 3, name: 'VDI Access Request', deadline: '2024-02-14' },
       { id: 4, name: 'Cargill Onboarding', deadline: '2024-02-15' },
@@ -91,14 +91,17 @@ export const EmployeeDashboard = () => {
   };
 
   const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+  // Filter out chatbot tasks (1-3) since they're handled by the chatbot
+  const visibleTasks = tasks.filter((task: any) => task.id > 3);
   const completedCount = currentEmployee?.completedTasks?.length || 0;
-  const totalTasks = tasks.length;
-  const progress = totalTasks > 0 ? (completedCount / totalTasks) * 100 : 0;
+  const totalTasks = visibleTasks.length;
+  const progress = totalTasks > 0 ? (completedCount / (tasks.length)) * 100 : 0;
 
   const getTasksWithLockStatus = () => {
-    return tasks.map((task: any, index: number) => {
-      // First task is always unlocked, subsequent tasks require previous completion
-      const isLocked = index > 0 && !currentEmployee?.completedTasks?.includes(tasks[index - 1].id);
+    return visibleTasks.map((task: any, index: number) => {
+      // First visible task (task 4) is unlocked if chatbot is completed
+      // Subsequent tasks require previous completion
+      const isLocked = index > 0 && !currentEmployee?.completedTasks?.includes(visibleTasks[index - 1].id);
       return {
         ...task,
         isLocked
@@ -212,7 +215,7 @@ export const EmployeeDashboard = () => {
                 <CheckCircle className="h-7 w-7 text-green-600 dark:text-green-400" />
               </div>
               <p className="text-sm font-medium text-muted-foreground mb-1">Tasks Completed</p>
-              <p className="text-xl font-bold text-foreground">{completedCount} / {totalTasks}</p>
+              <p className="text-xl font-bold text-foreground">{completedCount} / {tasks.length}</p>
             </CardContent>
           </Card>
 
@@ -241,7 +244,7 @@ export const EmployeeDashboard = () => {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-foreground">Overall Completion</span>
-                <span className="text-sm text-muted-foreground font-medium">{completedCount} of {totalTasks} tasks completed</span>
+                <span className="text-sm text-muted-foreground font-medium">{completedCount} of {tasks.length} tasks completed</span>
               </div>
               <Progress value={progress} className="h-3 bg-secondary" />
             </div>
@@ -252,7 +255,7 @@ export const EmployeeDashboard = () => {
               </div>
               <div className="flex items-center gap-2">
                 <div className="h-3 w-3 rounded-full bg-orange-500"></div>
-                <span className="font-medium">{totalTasks - completedCount} Remaining</span>
+                <span className="font-medium">{tasks.length - completedCount} Remaining</span>
               </div>
             </div>
           </CardContent>
