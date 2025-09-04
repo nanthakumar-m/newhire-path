@@ -29,16 +29,18 @@ import { GenCTicketTracking } from "./GenCTicketTracking";
 // This will be calculated from localStorage
 
 const taskStats = [
-  { id: 1, title: "Cargill Onboarding", icon: Shield, completed: 20, total: 24, priority: "high" as const },
-  { id: 2, title: "AWS", icon: Code, completed: 22, total: 24, priority: "high" as const },
-  { id: 3, title: "Gen AI", icon: TrendingUp, completed: 18, total: 24, priority: "high" as const },
-  { id: 4, title: "CyberSecurity", icon: Shield, completed: 24, total: 24, priority: "high" as const },
-  { id: 5, title: "Cargill Mandatory Course 1", icon: BookOpen, completed: 16, total: 24, priority: "medium" as const },
-  { id: 6, title: "Cargill Mandatory Course 2", icon: BookOpen, completed: 19, total: 24, priority: "medium" as const },
-  { id: 7, title: "Cargill Mandatory Course 3", icon: BookOpen, completed: 21, total: 24, priority: "medium" as const },
-  { id: 8, title: "Complete KT", icon: Users, completed: 15, total: 24, priority: "high" as const },
-  { id: 9, title: "Complete Reverse KT", icon: MessageSquare, completed: 17, total: 24, priority: "high" as const },
-  { id: 10, title: "System Integration Training", icon: Laptop, completed: 14, total: 24, priority: "medium" as const },
+  { id: 1, title: "Basic Profile Setup", icon: Users, completed: 20, total: 24, priority: "high" as const },
+  { id: 2, title: "People Soft HCM Update", icon: Building, completed: 22, total: 24, priority: "high" as const },
+  { id: 3, title: "VDI Access Request", icon: Laptop, completed: 18, total: 24, priority: "high" as const },
+  { id: 4, title: "Cargill Onboarding", icon: Shield, completed: 20, total: 24, priority: "high" as const },
+  { id: 5, title: "AWS", icon: Code, completed: 22, total: 24, priority: "high" as const },
+  { id: 6, title: "Gen AI", icon: TrendingUp, completed: 18, total: 24, priority: "high" as const },
+  { id: 7, title: "CyberSecurity", icon: Shield, completed: 24, total: 24, priority: "high" as const },
+  { id: 8, title: "Cargill Mandatory Course 1", icon: BookOpen, completed: 16, total: 24, priority: "medium" as const },
+  { id: 9, title: "Cargill Mandatory Course 2", icon: BookOpen, completed: 19, total: 24, priority: "medium" as const },
+  { id: 10, title: "Cargill Mandatory Course 3", icon: BookOpen, completed: 21, total: 24, priority: "medium" as const },
+  { id: 11, title: "Complete KT", icon: Users, completed: 15, total: 24, priority: "high" as const },
+  { id: 12, title: "Complete Reverse KT", icon: MessageSquare, completed: 17, total: 24, priority: "high" as const },
 ];
 
 export const ManagerDashboard = () => {
@@ -61,10 +63,10 @@ export const ManagerDashboard = () => {
     const storedEmployees = JSON.parse(localStorage.getItem('employees') || '[]');
     setEmployees(storedEmployees);
     
-    // Calculate stats - update to check for Reverse KT completion (task 9)
+    // Calculate stats - update to check for Reverse KT completion (task 12 now)
     const total = storedEmployees.length;
-    const onboarded = storedEmployees.filter((emp: Employee) => emp.completedTasks.includes(9)).length;
-    const inProgress = storedEmployees.filter((emp: Employee) => emp.completedTasks.length > 0 && !emp.completedTasks.includes(9)).length;
+    const onboarded = storedEmployees.filter((emp: Employee) => emp.completedTasks.includes(12)).length;
+    const inProgress = storedEmployees.filter((emp: Employee) => emp.completedTasks.length > 0 && !emp.completedTasks.includes(12)).length;
     const notStarted = storedEmployees.filter((emp: Employee) => emp.completedTasks.length === 0).length;
 
     setEmployeeStats({ total, onboarded, inProgress, notStarted });
@@ -163,7 +165,7 @@ export const ManagerDashboard = () => {
               </div>
               <EmployeeListTable 
                 title="Fully Onboarded Employees" 
-                employees={employees.filter(emp => emp.completedTasks.includes(9))} 
+                employees={employees.filter(emp => emp.completedTasks.includes(12))} 
                 type="onboarded" 
               />
             </div>
@@ -183,7 +185,7 @@ export const ManagerDashboard = () => {
               </div>
               <EmployeeListTable 
                 title="In Progress Employees" 
-                employees={employees.filter(emp => emp.completedTasks.length > 0 && !emp.completedTasks.includes(9))} 
+                employees={employees.filter(emp => emp.completedTasks.length > 0 && !emp.completedTasks.includes(12))} 
                 type="in-progress" 
               />
             </div>

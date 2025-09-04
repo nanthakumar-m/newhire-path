@@ -23,16 +23,18 @@ export const EmployeeDashboard = () => {
     const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
     if (tasks.length === 0) {
       const newTasks = [
-        { id: 1, name: 'Cargill Onboarding', deadline: '2024-02-15' },
-        { id: 2, name: 'AWS', deadline: '2024-02-18' },
-        { id: 3, name: 'Gen AI', deadline: '2024-02-20' },
-        { id: 4, name: 'CyberSecurity', deadline: '2024-02-22' },
-        { id: 5, name: 'Cargill Mandatory Course 1', deadline: '2024-02-25' },
-        { id: 6, name: 'Cargill Mandatory Course 2', deadline: '2024-02-28' },
-        { id: 7, name: 'Cargill Mandatory Course 3', deadline: '2024-03-02' },
-        { id: 8, name: 'Complete KT', deadline: '2024-03-05' },
-        { id: 9, name: 'Complete Reverse KT', deadline: '2024-03-08' },
-        { id: 10, name: 'System Integration Training', deadline: '2024-03-10' }
+        { id: 1, name: 'Basic Profile Setup', deadline: '2024-02-10' },
+        { id: 2, name: 'People Soft HCM Update', deadline: '2024-02-12' },
+        { id: 3, name: 'VDI Access Request', deadline: '2024-02-14' },
+        { id: 4, name: 'Cargill Onboarding', deadline: '2024-02-15' },
+        { id: 5, name: 'AWS', deadline: '2024-02-18' },
+        { id: 6, name: 'Gen AI', deadline: '2024-02-20' },
+        { id: 7, name: 'CyberSecurity', deadline: '2024-02-22' },
+        { id: 8, name: 'Cargill Mandatory Course 1', deadline: '2024-02-25' },
+        { id: 9, name: 'Cargill Mandatory Course 2', deadline: '2024-02-28' },
+        { id: 10, name: 'Cargill Mandatory Course 3', deadline: '2024-03-02' },
+        { id: 11, name: 'Complete KT', deadline: '2024-03-05' },
+        { id: 12, name: 'Complete Reverse KT', deadline: '2024-03-08' }
       ];
       localStorage.setItem('tasks', JSON.stringify(newTasks));
     }
@@ -42,9 +44,9 @@ export const EmployeeDashboard = () => {
       setShowChatbot(true);
     }
 
-    // Check if Reverse KT (task 9) is completed to show tickets
+    // Check if Reverse KT (task 12 now) is completed to show tickets
     const completedTasks = currentEmployee?.completedTasks || [];
-    if (completedTasks.includes(9)) {
+    if (completedTasks.includes(12)) {
       setAllTasksCompleted(true);
     }
   }, [currentEmployee]);
@@ -62,8 +64,8 @@ export const EmployeeDashboard = () => {
           
         const updatedEmployee = { ...emp, completedTasks: updatedTasks };
         
-        // Check if Reverse KT (task 9) is completed to show tickets
-        if (updatedTasks.includes(9)) {
+        // Check if Reverse KT (task 12 now) is completed to show tickets
+        if (updatedTasks.includes(12)) {
           setAllTasksCompleted(true);
           setShowCongratulations(true);
         }

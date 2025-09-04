@@ -58,16 +58,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const existingTasks = localStorage.getItem('tasks');
     if (!existingTasks) {
       const sampleTasks = [
-        { id: 1, name: 'Complete System Training', deadline: '2024-02-15' },
-        { id: 2, name: 'Setup Development Environment', deadline: '2024-02-18' },
-        { id: 3, name: 'Review Company Policies', deadline: '2024-02-20' },
-        { id: 4, name: 'Attend Team Introduction', deadline: '2024-02-22' },
-        { id: 5, name: 'Complete Security Training', deadline: '2024-02-25' },
-        { id: 6, name: 'Setup Project Access', deadline: '2024-02-28' },
-        { id: 7, name: 'Review Documentation', deadline: '2024-03-02' },
-        { id: 8, name: 'Complete Compliance Training', deadline: '2024-03-05' },
-        { id: 9, name: 'Submit Initial Assessment', deadline: '2024-03-08' },
-        { id: 10, name: 'Schedule Manager Review', deadline: '2024-03-10' }
+        { id: 1, name: 'Basic Profile Setup', deadline: '2024-02-10' },
+        { id: 2, name: 'People Soft HCM Update', deadline: '2024-02-12' },
+        { id: 3, name: 'VDI Access Request', deadline: '2024-02-14' },
+        { id: 4, name: 'Cargill Onboarding', deadline: '2024-02-15' },
+        { id: 5, name: 'AWS', deadline: '2024-02-18' },
+        { id: 6, name: 'Gen AI', deadline: '2024-02-20' },
+        { id: 7, name: 'CyberSecurity', deadline: '2024-02-22' },
+        { id: 8, name: 'Cargill Mandatory Course 1', deadline: '2024-02-25' },
+        { id: 9, name: 'Cargill Mandatory Course 2', deadline: '2024-02-28' },
+        { id: 10, name: 'Cargill Mandatory Course 3', deadline: '2024-03-02' },
+        { id: 11, name: 'Complete KT', deadline: '2024-03-05' },
+        { id: 12, name: 'Complete Reverse KT', deadline: '2024-03-08' }
       ];
       localStorage.setItem('tasks', JSON.stringify(sampleTasks));
     }

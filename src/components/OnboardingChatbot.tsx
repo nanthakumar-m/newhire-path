@@ -117,14 +117,23 @@ export const OnboardingChatbot = ({ isOpen, onClose, onComplete }: OnboardingCha
     const employees = JSON.parse(localStorage.getItem('employees') || '[]');
     const updatedEmployees = employees.map((emp: Employee) => {
       if (emp.id === currentEmployee.id) {
-        return { ...emp, mandatoryTasksCompleted: completed };
+        // Add tasks 1, 2, 3 (chatbot questions) to completed tasks
+        const updatedTasks = [...new Set([...emp.completedTasks, 1, 2, 3])];
+        return { 
+          ...emp, 
+          mandatoryTasksCompleted: completed,
+          completedTasks: updatedTasks
+        };
       }
       return emp;
     });
     localStorage.setItem('employees', JSON.stringify(updatedEmployees));
 
-    const updatedUser = { ...currentEmployee, mandatoryTasksCompleted: completed };
-    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+    // Update current user in localStorage as well
+    const updatedCurrentEmployee = updatedEmployees.find(emp => emp.id === currentEmployee.id);
+    if (updatedCurrentEmployee) {
+      localStorage.setItem('currentUser', JSON.stringify(updatedCurrentEmployee));
+    }
   };
 
   const handleContinueToDashboard = () => {
