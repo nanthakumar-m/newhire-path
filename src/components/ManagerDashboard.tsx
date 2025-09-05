@@ -2,12 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { EmployeeTable } from "./EmployeeTable";
-import { AddEmployeeForm } from "./AddEmployeeForm";
-import { EmployeeListTable } from "./EmployeeListTable";
+import { AssociateTable } from "./AssociateTable";
+import { AddAssociateForm } from "./AddAssociateForm";
+import { AssociateListTable } from "./AssociateListTable";
 import { TaskAssignmentForm } from "./TaskAssignmentForm";
 import { useState, useEffect } from "react";
-import { Employee } from "@/types/auth";
+import { Associate } from "@/types/auth";
 import { 
   Users, 
   UserCheck, 
@@ -45,10 +45,10 @@ const taskStats = [
 
 export const ManagerDashboard = () => {
   const [selectedTask, setSelectedTask] = useState<{ id: number; title: string } | null>(null);
-  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [associates, setAssociates] = useState<Associate[]>([]);
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [showTicketTracking, setShowTicketTracking] = useState(false);
-  const [employeeStats, setEmployeeStats] = useState({
+  const [associateStats, setAssociateStats] = useState({
     total: 0,
     onboarded: 0,
     inProgress: 0,
@@ -56,35 +56,35 @@ export const ManagerDashboard = () => {
   });
 
   useEffect(() => {
-    loadEmployees();
+    loadAssociates();
   }, []);
 
-  const loadEmployees = () => {
-    const storedEmployees = JSON.parse(localStorage.getItem('employees') || '[]');
-    setEmployees(storedEmployees);
+  const loadAssociates = () => {
+    const storedAssociates = JSON.parse(localStorage.getItem('associates') || '[]');
+    setAssociates(storedAssociates);
     
     // Calculate stats - update to check for Reverse KT completion (task 12 now)
-    const total = storedEmployees.length;
-    const onboarded = storedEmployees.filter((emp: Employee) => emp.completedTasks.includes(12)).length;
-    const inProgress = storedEmployees.filter((emp: Employee) => emp.completedTasks.length > 0 && !emp.completedTasks.includes(12)).length;
-    const notStarted = storedEmployees.filter((emp: Employee) => emp.completedTasks.length === 0).length;
+    const total = storedAssociates.length;
+    const onboarded = storedAssociates.filter((emp: Associate) => emp.completedTasks.includes(12)).length;
+    const inProgress = storedAssociates.filter((emp: Associate) => emp.completedTasks.length > 0 && !emp.completedTasks.includes(12)).length;
+    const notStarted = storedAssociates.filter((emp: Associate) => emp.completedTasks.length === 0).length;
 
-    setEmployeeStats({ total, onboarded, inProgress, notStarted });
+    setAssociateStats({ total, onboarded, inProgress, notStarted });
   };
 
   // Update task stats based on real employee data
   const getUpdatedTaskStats = () => {
     return taskStats.map(task => ({
       ...task,
-      completed: employees.filter(emp => emp.completedTasks.includes(task.id)).length,
-      total: employees.length
+      completed: associates.filter(emp => emp.completedTasks.includes(task.id)).length,
+      total: associates.length
     }));
   };
 
   const updatedTaskStats = getUpdatedTaskStats();
-  const overallCompletion = employees.length > 0 ? Math.round(
+  const overallCompletion = associates.length > 0 ? Math.round(
     (updatedTaskStats.reduce((sum, task) => sum + task.completed, 0) / 
-     (updatedTaskStats.length * employees.length)) * 100
+     (updatedTaskStats.length * associates.length)) * 100
   ) : 0;
 
   const getPriorityColor = (priority: string) => {
@@ -123,7 +123,7 @@ export const ManagerDashboard = () => {
           </Button>
           <h2 className="text-2xl font-bold">Task Details</h2>
         </div>
-        <EmployeeTable taskTitle={selectedTask.title} taskId={selectedTask.id} />
+        <AssociateTable taskTitle={selectedTask.title} taskId={selectedTask.id} />
       </div>
     );
   }
@@ -134,18 +134,18 @@ export const ManagerDashboard = () => {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Employees</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Associates</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-foreground">{employeeStats.total}</div>
+                <div className="text-2xl font-bold text-foreground">{associateStats.total}</div>
                 <p className="text-xs text-muted-foreground">Active in onboarding</p>
               </div>
-              <EmployeeListTable 
-                title="All Employees" 
-                employees={employees} 
+              <AssociateListTable 
+                title="All Associates" 
+                associates={associates} 
                 type="total" 
               />
             </div>
@@ -160,12 +160,12 @@ export const ManagerDashboard = () => {
           <CardContent>
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-success">{employeeStats.onboarded}</div>
+                <div className="text-2xl font-bold text-success">{associateStats.onboarded}</div>
                 <p className="text-xs text-muted-foreground">Completed all tasks</p>
               </div>
-              <EmployeeListTable 
-                title="Fully Onboarded Employees" 
-                employees={employees.filter(emp => emp.completedTasks.includes(12))} 
+              <AssociateListTable 
+                title="Fully Onboarded Associates" 
+                associates={associates.filter(emp => emp.completedTasks.includes(12))} 
                 type="onboarded" 
               />
             </div>
@@ -180,12 +180,12 @@ export const ManagerDashboard = () => {
           <CardContent>
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-warning">{employeeStats.inProgress}</div>
+                <div className="text-2xl font-bold text-warning">{associateStats.inProgress}</div>
                 <p className="text-xs text-muted-foreground">Active onboarding</p>
               </div>
-              <EmployeeListTable 
-                title="In Progress Employees" 
-                employees={employees.filter(emp => emp.completedTasks.length > 0 && !emp.completedTasks.includes(12))} 
+              <AssociateListTable 
+                title="In Progress Associates" 
+                associates={associates.filter(emp => emp.completedTasks.length > 0 && !emp.completedTasks.includes(12))} 
                 type="in-progress" 
               />
             </div>
@@ -200,12 +200,12 @@ export const ManagerDashboard = () => {
           <CardContent>
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-destructive">{employeeStats.notStarted}</div>
+                <div className="text-2xl font-bold text-destructive">{associateStats.notStarted}</div>
                 <p className="text-xs text-muted-foreground">Needs attention</p>
               </div>
-              <EmployeeListTable 
-                title="Not Started Employees" 
-                employees={employees.filter(emp => emp.completedTasks.length === 0)} 
+              <AssociateListTable 
+                title="Not Started Associates" 
+                associates={associates.filter(emp => emp.completedTasks.length === 0)} 
                 type="not-started" 
               />
             </div>
@@ -231,15 +231,15 @@ export const ManagerDashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-success"></div>
-              <span>Completed: {employeeStats.onboarded} employees</span>
+              <span>Completed: {associateStats.onboarded} associates</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-warning"></div>
-              <span>In Progress: {employeeStats.inProgress} employees</span>
+              <span>In Progress: {associateStats.inProgress} associates</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-destructive"></div>
-              <span>Not Started: {employeeStats.notStarted} employees</span>
+              <span>Not Started: {associateStats.notStarted} associates</span>
             </div>
           </div>
         </CardContent>
@@ -249,7 +249,7 @@ export const ManagerDashboard = () => {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Employee Management</CardTitle>
+            <CardTitle>Associate Management</CardTitle>
             <div className="flex gap-2">
               <Button 
                 variant="outline"
@@ -259,13 +259,13 @@ export const ManagerDashboard = () => {
                 <BookOpen className="h-4 w-4" />
                 Assign New Task
               </Button>
-              <AddEmployeeForm onEmployeeAdded={loadEmployees} />
+              <AddAssociateForm onAssociateAdded={loadAssociates} />
             </div>
           </div>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            Add new employees to the onboarding system and assign custom tasks to all employees.
+            Add new associates to the onboarding system and assign custom tasks to all associates.
           </p>
         </CardContent>
       </Card>
@@ -282,7 +282,7 @@ export const ManagerDashboard = () => {
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground mb-4">
-            Monitor and track all GenC employee ticket submissions and their incident reports.
+            Monitor and track all GenC associate ticket submissions and their incident reports.
           </p>
           <Button variant="secondary" onClick={() => setShowTicketTracking(true)}>
             <FileText className="h-4 w-4 mr-2" />
@@ -297,7 +297,7 @@ export const ManagerDashboard = () => {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {updatedTaskStats.map((task) => {
             const IconComponent = task.icon;
-            const completionRate = employees.length > 0 ? Math.round((task.completed / task.total) * 100) : 0;
+            const completionRate = associates.length > 0 ? Math.round((task.completed / task.total) * 100) : 0;
             
             return (
               <Card 
@@ -332,7 +332,7 @@ export const ManagerDashboard = () => {
       <TaskAssignmentForm 
         isOpen={showTaskForm}
         onClose={() => setShowTaskForm(false)}
-        onTaskAssigned={loadEmployees}
+        onTaskAssigned={loadAssociates}
       />
     </div>
   );

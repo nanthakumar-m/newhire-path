@@ -2,19 +2,19 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Employee } from "@/types/auth";
+import { Associate } from "@/types/auth";
 import { format } from "date-fns";
 import { Eye } from "lucide-react";
 
-interface EmployeeListTableProps {
+interface AssociateListTableProps {
   title: string;
-  employees: Employee[];
+  associates: Associate[];
   type: 'total' | 'onboarded' | 'in-progress' | 'not-started';
 }
 
-export const EmployeeListTable = ({ title, employees, type }: EmployeeListTableProps) => {
-  const getStatusBadge = (employee: Employee) => {
-    const completionRate = (employee.completedTasks.length / 10) * 100;
+export const AssociateListTable = ({ title, associates, type }: AssociateListTableProps) => {
+  const getStatusBadge = (associate: Associate) => {
+    const completionRate = (associate.completedTasks.length / 10) * 100;
     
     if (completionRate === 100) {
       return <Badge variant="default" className="bg-success text-success-foreground">Completed</Badge>;
@@ -39,7 +39,7 @@ export const EmployeeListTable = ({ title, employees, type }: EmployeeListTableP
       
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{title} ({employees.length} employees)</DialogTitle>
+          <DialogTitle>{title} ({associates.length} associates)</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4">
@@ -48,7 +48,7 @@ export const EmployeeListTable = ({ title, employees, type }: EmployeeListTableP
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead>Employee ID</TableHead>
+                  <TableHead>Associate ID</TableHead>
                   <TableHead>Department</TableHead>
                   <TableHead>Onboarding Date</TableHead>
                   <TableHead>Progress</TableHead>
@@ -56,27 +56,27 @@ export const EmployeeListTable = ({ title, employees, type }: EmployeeListTableP
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {employees.map((employee) => (
-                  <TableRow key={employee.id}>
-                    <TableCell className="font-medium">{employee.name}</TableCell>
-                    <TableCell>{employee.employeeId}</TableCell>
-                    <TableCell>{employee.department}</TableCell>
-                    <TableCell>{format(new Date(employee.onboardingDate), 'MMM dd, yyyy')}</TableCell>
+                {associates.map((associate) => (
+                  <TableRow key={associate.id}>
+                    <TableCell className="font-medium">{associate.name}</TableCell>
+                    <TableCell>{associate.associateId}</TableCell>
+                    <TableCell>{associate.department}</TableCell>
+                    <TableCell>{format(new Date(associate.onboardingDate), 'MMM dd, yyyy')}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <div className="w-16 bg-muted rounded-full h-2">
                           <div 
                             className="bg-primary h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${getProgressPercentage(employee.completedTasks)}%` }}
+                            style={{ width: `${getProgressPercentage(associate.completedTasks)}%` }}
                           />
                         </div>
                         <span className="text-sm text-muted-foreground">
-                          {getProgressPercentage(employee.completedTasks)}%
+                          {getProgressPercentage(associate.completedTasks)}%
                         </span>
                       </div>
                     </TableCell>
                     <TableCell>
-                      {getStatusBadge(employee)}
+                      {getStatusBadge(associate)}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -84,9 +84,9 @@ export const EmployeeListTable = ({ title, employees, type }: EmployeeListTableP
             </Table>
           </div>
           
-          {employees.length === 0 && (
+          {associates.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
-              No employees in this category
+              No associates in this category
             </div>
           )}
         </div>

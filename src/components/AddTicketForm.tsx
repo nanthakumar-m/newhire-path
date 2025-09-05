@@ -19,7 +19,7 @@ export const AddTicketForm = ({ onBack }: AddTicketFormProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [formData, setFormData] = useState<TicketFormData>({
-    associateId: user?.employeeId || '',
+    associateId: user?.associateId || '',
     associateName: user?.name || '',
     incidentId: '',
     customer: '',

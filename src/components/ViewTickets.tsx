@@ -21,7 +21,7 @@ export const ViewTickets = ({ onBack }: ViewTicketsProps) => {
 
   const loadTickets = () => {
     const allTickets = JSON.parse(localStorage.getItem('tickets') || '[]');
-    const userTickets = allTickets.filter((ticket: Ticket) => ticket.associateId === user?.employeeId);
+    const userTickets = allTickets.filter((ticket: Ticket) => ticket.associateId === user?.associateId);
     setTickets(userTickets);
   };
 

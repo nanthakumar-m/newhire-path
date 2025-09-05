@@ -9,11 +9,11 @@ import { TaskCard } from '@/components/TaskCard';
 import { OnboardingChatbot } from '@/components/OnboardingChatbot';
 import { TicketSystem } from '@/components/TicketSystem';
 import { useAuth } from '@/contexts/AuthContext';
-import { Employee } from '@/types/auth';
+import { Associate } from '@/types/auth';
 
-export const EmployeeDashboard = () => {
+export const AssociateDashboard = () => {
   const { user } = useAuth();
-  const currentEmployee = user as Employee;
+  const currentAssociate = user as Associate;
   const [showChatbot, setShowChatbot] = useState(false);
   const [showCongratulations, setShowCongratulations] = useState(false);
   const [allTasksCompleted, setAllTasksCompleted] = useState(false);
@@ -37,29 +37,29 @@ export const EmployeeDashboard = () => {
     localStorage.setItem('tasks', JSON.stringify(newTasks));
 
     // Show chatbot if mandatory tasks are not completed
-    if (currentEmployee && !currentEmployee.mandatoryTasksCompleted) {
+    if (currentAssociate && !currentAssociate.mandatoryTasksCompleted) {
       setShowChatbot(true);
     }
 
     // Check if Reverse KT (task 12 now) is completed to show tickets
-    const completedTasks = currentEmployee?.completedTasks || [];
+    const completedTasks = currentAssociate?.completedTasks || [];
     if (completedTasks.includes(12)) {
       setAllTasksCompleted(true);
     }
-  }, [currentEmployee]);
+  }, [currentAssociate]);
 
   const handleToggleComplete = (taskId: number) => {
-    const employees = JSON.parse(localStorage.getItem('employees') || '[]');
-    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    const associates = JSON.parse(localStorage.getItem('associates') || '[]');
     
-    const updatedEmployees = employees.map((emp: Employee) => {
-      if (emp.id === currentEmployee.id) {
+    // Find and update the current associate
+    const updatedAssociates = associates.map((emp: Associate) => {
+      if (emp.id === currentAssociate.id) {
         const isCompleting = !emp.completedTasks.includes(taskId);
         const updatedTasks = isCompleting
           ? [...emp.completedTasks, taskId]
           : emp.completedTasks.filter(id => id !== taskId);
           
-        const updatedEmployee = { ...emp, completedTasks: updatedTasks };
+        const updatedAssociate = { ...emp, completedTasks: updatedTasks };
         
         // Check if Reverse KT (task 12 now) is completed to show tickets
         if (updatedTasks.includes(12)) {
@@ -67,17 +67,17 @@ export const EmployeeDashboard = () => {
           setShowCongratulations(true);
         }
         
-        return updatedEmployee;
+        return updatedAssociate;
       }
       return emp;
     });
 
-    localStorage.setItem('employees', JSON.stringify(updatedEmployees));
+    localStorage.setItem('associates', JSON.stringify(updatedAssociates));
     
     // Update the current user in localStorage as well to sync with auth context
-    const updatedCurrentEmployee = updatedEmployees.find(emp => emp.id === currentEmployee.id);
-    if (updatedCurrentEmployee) {
-      localStorage.setItem('currentUser', JSON.stringify(updatedCurrentEmployee));
+    const updatedCurrentAssociate = updatedAssociates.find(emp => emp.id === currentAssociate.id);
+    if (updatedCurrentAssociate) {
+      localStorage.setItem('currentUser', JSON.stringify(updatedCurrentAssociate));
     }
     
     // Force component re-render by reloading
@@ -93,7 +93,7 @@ export const EmployeeDashboard = () => {
   const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
   // Filter out chatbot tasks (1-3) since they're handled by the chatbot
   const visibleTasks = tasks.filter((task: any) => task.id > 3);
-  const completedCount = currentEmployee?.completedTasks?.length || 0;
+  const completedCount = currentAssociate?.completedTasks?.length || 0;
   const totalTasks = visibleTasks.length;
   const progress = totalTasks > 0 ? (completedCount / (tasks.length)) * 100 : 0;
 
@@ -101,7 +101,7 @@ export const EmployeeDashboard = () => {
     return visibleTasks.map((task: any, index: number) => {
       // First visible task (task 4) is unlocked if chatbot is completed
       // Subsequent tasks require previous completion
-      const isLocked = index > 0 && !currentEmployee?.completedTasks?.includes(visibleTasks[index - 1].id);
+      const isLocked = index > 0 && !currentAssociate?.completedTasks?.includes(visibleTasks[index - 1].id);
       return {
         ...task,
         isLocked
@@ -148,7 +148,7 @@ export const EmployeeDashboard = () => {
   }
 
   // Show simplified view if mandatory tasks not completed
-  if (!currentEmployee?.mandatoryTasksCompleted) {
+  if (!currentAssociate?.mandatoryTasksCompleted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 flex items-center justify-center p-6">
         <Card className="max-w-lg text-center shadow-xl border-0 bg-card/80 backdrop-blur-sm">
@@ -180,7 +180,7 @@ export const EmployeeDashboard = () => {
         {/* Header Section */}
         <div className="text-center space-y-3 py-6">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Welcome to Cargill, {currentEmployee?.name}
+            Welcome to Cargill, {currentAssociate?.name}
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Complete your onboarding journey and unlock your full potential with our step-by-step process
@@ -194,8 +194,8 @@ export const EmployeeDashboard = () => {
               <div className="h-14 w-14 rounded-full bg-primary/10 mx-auto mb-4 flex items-center justify-center">
                 <User className="h-7 w-7 text-primary" />
               </div>
-              <p className="text-sm font-medium text-muted-foreground mb-1">Employee ID</p>
-              <p className="text-xl font-bold text-foreground">{currentEmployee?.employeeId}</p>
+              <p className="text-sm font-medium text-muted-foreground mb-1">Associate ID</p>
+              <p className="text-xl font-bold text-foreground">{currentAssociate?.associateId}</p>
             </CardContent>
           </Card>
 
@@ -205,7 +205,7 @@ export const EmployeeDashboard = () => {
                 <BookOpen className="h-7 w-7 text-blue-600 dark:text-blue-400" />
               </div>
               <p className="text-sm font-medium text-muted-foreground mb-1">Department</p>
-              <p className="text-xl font-bold text-foreground">{currentEmployee?.department}</p>
+              <p className="text-xl font-bold text-foreground">{currentAssociate?.department}</p>
             </CardContent>
           </Card>
 
@@ -281,7 +281,7 @@ export const EmployeeDashboard = () => {
                     title={task.name}
                     description={`Complete this essential onboarding task by the specified deadline to progress to the next step.`}
                     deadline={task.deadline}
-                    isCompleted={currentEmployee?.completedTasks?.includes(task.id) || false}
+                    isCompleted={currentAssociate?.completedTasks?.includes(task.id) || false}
                     onToggleComplete={handleToggleComplete}
                     isLocked={task.isLocked}
                   />

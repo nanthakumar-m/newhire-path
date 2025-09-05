@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { EmployeeDashboard } from "@/components/EmployeeDashboard";
+import { AssociateDashboard } from "@/components/AssociateDashboard";
 import { ManagerDashboard } from "@/components/ManagerDashboard";
 import { useAuth } from "@/contexts/AuthContext";
 import { Users, LogOut } from "lucide-react";
@@ -44,7 +44,7 @@ const Index = () => {
 
       {/* Dashboard Content */}
       <main className="container mx-auto px-4 py-8">
-        {user?.type === "employee" ? <EmployeeDashboard /> : <ManagerDashboard />}
+        {user?.type === "associate" ? <AssociateDashboard /> : <ManagerDashboard />}
       </main>
     </div>
   );

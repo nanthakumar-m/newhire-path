@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, Manager, Employee, AuthContextType } from '@/types/auth';
+import { User, Manager, Associate, AuthContextType } from '@/types/auth';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -17,14 +17,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     // Initialize with sample employees if none exist
-    const existingEmployees = localStorage.getItem('employees');
-    if (!existingEmployees) {
-      const sampleEmployees: Employee[] = [
+    const existingAssociates = localStorage.getItem('associates');
+    if (!existingAssociates) {
+      const sampleAssociates: Associate[] = [
         {
           id: '1',
           name: 'Sarah Johnson',
-          type: 'employee',
-          employeeId: 'EMP001',
+          type: 'associate',
+          associateId: 'EMP001',
           department: 'DE',
           onboardingDate: '2024-01-15',
           completedTasks: [],
@@ -33,8 +33,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         {
           id: '2',
           name: 'Mike Chen',
-          type: 'employee',
-          employeeId: 'EMP002',
+          type: 'associate',
+          associateId: 'EMP002',
           department: 'SAP',
           onboardingDate: '2024-01-20',
           completedTasks: [],
@@ -43,15 +43,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         {
           id: '3',
           name: 'Emma Davis',
-          type: 'employee',
-          employeeId: 'EMP003',
+          type: 'associate',
+          associateId: 'EMP003',
           department: 'IoT',
           onboardingDate: '2024-01-10',
           completedTasks: [],
           mandatoryTasksCompleted: false
         }
       ];
-      localStorage.setItem('employees', JSON.stringify(sampleEmployees));
+      localStorage.setItem('associates', JSON.stringify(sampleAssociates));
     }
 
     // Initialize with sample tasks if none exist
@@ -95,15 +95,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return true;
     }
     
-    // Employee login - Employee ID for both username and password
-    const employees = JSON.parse(localStorage.getItem('employees') || '[]');
-    const employee = employees.find((emp: Employee) => 
-      emp.employeeId === id && emp.employeeId === password
+    // Associate login - Associate ID for both username and password
+    const associates = JSON.parse(localStorage.getItem('associates') || '[]');
+    const associate = associates.find((emp: Associate) => 
+      emp.associateId === id && emp.associateId === password
     );
     
-    if (employee) {
-      setUser(employee);
-      localStorage.setItem('currentUser', JSON.stringify(employee));
+    if (associate) {
+      setUser(associate);
+      localStorage.setItem('currentUser', JSON.stringify(associate));
       return true;
     }
     

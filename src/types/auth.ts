@@ -1,15 +1,15 @@
 export interface User {
   id: string;
   name: string;
-  type: 'manager' | 'employee';
-  employeeId?: string;
+  type: 'manager' | 'associate';
+  associateId?: string;
   department?: string;
   onboardingDate?: string;
 }
 
-export interface Employee extends User {
-  type: 'employee';
-  employeeId: string;
+export interface Associate extends User {
+  type: 'associate';
+  associateId: string;
   department: string;
   onboardingDate: string;
   completedTasks: number[];

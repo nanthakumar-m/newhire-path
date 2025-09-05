@@ -4,14 +4,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CheckCircle, XCircle, Filter } from "lucide-react";
-import { Employee } from "@/types/auth";
+import { Associate } from "@/types/auth";
 
-interface EmployeeTableProps {
+interface AssociateTableProps {
   taskTitle: string;
   taskId: number;
 }
 
-// Employee data will be loaded from localStorage
+// Associate data will be loaded from localStorage
 
 const taskNames = [
   "Safety Course",
@@ -26,28 +26,28 @@ const taskNames = [
   "Dev Environment"
 ];
 
-export const EmployeeTable = ({ taskTitle, taskId }: EmployeeTableProps) => {
-  const [employees, setEmployees] = useState<Employee[]>([]);
+export const AssociateTable = ({ taskTitle, taskId }: AssociateTableProps) => {
+  const [associates, setAssociates] = useState<Associate[]>([]);
   const [filter, setFilter] = useState<'all' | 'completed' | 'pending'>('all');
 
   useEffect(() => {
-    const storedEmployees = JSON.parse(localStorage.getItem('employees') || '[]');
-    setEmployees(storedEmployees);
+    const storedAssociates = JSON.parse(localStorage.getItem('associates') || '[]');
+    setAssociates(storedAssociates);
   }, []);
 
   const getOverallCompletion = (completedTasks: number[]) => {
     return Math.round((completedTasks.length / 10) * 100);
   };
 
-  const getTaskStatus = (employeeCompletedTasks: number[], taskIndex: number) => {
-    return employeeCompletedTasks.includes(taskIndex);
+  const getTaskStatus = (associateCompletedTasks: number[], taskIndex: number) => {
+    return associateCompletedTasks.includes(taskIndex);
   };
 
-  const filteredEmployees = employees.filter(employee => {
+  const filteredAssociates = associates.filter(associate => {
     if (filter === 'completed') {
-      return getTaskStatus(employee.completedTasks, taskId);
+      return getTaskStatus(associate.completedTasks, taskId);
     } else if (filter === 'pending') {
-      return !getTaskStatus(employee.completedTasks, taskId);
+      return !getTaskStatus(associate.completedTasks, taskId);
     }
     return true;
   });
@@ -55,7 +55,7 @@ export const EmployeeTable = ({ taskTitle, taskId }: EmployeeTableProps) => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Employee Status for: {taskTitle}</h3>
+        <h3 className="text-lg font-semibold">Associate Status for: {taskTitle}</h3>
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-muted-foreground" />
           <Select value={filter} onValueChange={(value: 'all' | 'completed' | 'pending') => setFilter(value)}>
@@ -76,26 +76,26 @@ export const EmployeeTable = ({ taskTitle, taskId }: EmployeeTableProps) => {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Employee ID</TableHead>
+              <TableHead>Associate ID</TableHead>
               <TableHead>Department</TableHead>
               <TableHead>Overall Progress</TableHead>
               <TableHead>Task Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredEmployees.map((employee) => (
-              <TableRow key={employee.id}>
-                <TableCell className="font-medium">{employee.name}</TableCell>
-                <TableCell>{employee.employeeId}</TableCell>
-                <TableCell>{employee.department}</TableCell>
+            {filteredAssociates.map((associate) => (
+              <TableRow key={associate.id}>
+                <TableCell className="font-medium">{associate.name}</TableCell>
+                <TableCell>{associate.associateId}</TableCell>
+                <TableCell>{associate.department}</TableCell>
                 <TableCell>
                   <Badge variant="secondary">
-                    {getOverallCompletion(employee.completedTasks)}%
+                    {getOverallCompletion(associate.completedTasks)}%
                   </Badge>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {getTaskStatus(employee.completedTasks, taskId) ? (
+                    {getTaskStatus(associate.completedTasks, taskId) ? (
                       <div className="flex items-center gap-1 text-success">
                         <CheckCircle className="h-4 w-4" />
                         <span className="text-sm">Completed</span>
@@ -114,9 +114,9 @@ export const EmployeeTable = ({ taskTitle, taskId }: EmployeeTableProps) => {
         </Table>
       </div>
       
-      {filteredEmployees.length === 0 && (
+      {filteredAssociates.length === 0 && (
         <div className="text-center py-8 text-muted-foreground">
-          No employees found for the selected filter
+          No associates found for the selected filter
         </div>
       )}
     </div>

@@ -6,18 +6,18 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { UserPlus } from 'lucide-react';
-import { Employee } from '@/types/auth';
+import { Associate } from '@/types/auth';
 import { useToast } from '@/hooks/use-toast';
 
-interface AddEmployeeFormProps {
-  onEmployeeAdded: () => void;
+interface AddAssociateFormProps {
+  onAssociateAdded: () => void;
 }
 
-export const AddEmployeeForm = ({ onEmployeeAdded }: AddEmployeeFormProps) => {
+export const AddAssociateForm = ({ onAssociateAdded }: AddAssociateFormProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    employeeId: '',
+    associateId: '',
     department: '',
     onboardingDate: ''
   });
@@ -34,7 +34,7 @@ export const AddEmployeeForm = ({ onEmployeeAdded }: AddEmployeeFormProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.employeeId || !formData.department || !formData.onboardingDate) {
+    if (!formData.name || !formData.associateId || !formData.department || !formData.onboardingDate) {
       toast({
         title: 'Error',
         description: 'Please fill in all fields',
@@ -43,40 +43,40 @@ export const AddEmployeeForm = ({ onEmployeeAdded }: AddEmployeeFormProps) => {
       return;
     }
 
-    const existingEmployees = JSON.parse(localStorage.getItem('employees') || '[]');
+    const existingAssociates = JSON.parse(localStorage.getItem('associates') || '[]');
     
-    // Check if employee ID already exists
-    if (existingEmployees.find((emp: Employee) => emp.employeeId === formData.employeeId)) {
+    // Check if associate ID already exists
+    if (existingAssociates.find((emp: Associate) => emp.associateId === formData.associateId)) {
       toast({
         title: 'Error',
-        description: 'Employee ID already exists',
+        description: 'Associate ID already exists',
         variant: 'destructive'
       });
       return;
     }
 
-    const newEmployee: Employee = {
+    const newAssociate: Associate = {
       id: Date.now().toString(),
       name: formData.name,
-      type: 'employee',
-      employeeId: formData.employeeId,
+      type: 'associate',
+      associateId: formData.associateId,
       department: formData.department,
       onboardingDate: formData.onboardingDate,
       completedTasks: [],
       mandatoryTasksCompleted: false
     };
 
-    const updatedEmployees = [...existingEmployees, newEmployee];
-    localStorage.setItem('employees', JSON.stringify(updatedEmployees));
+    const updatedAssociates = [...existingAssociates, newAssociate];
+    localStorage.setItem('associates', JSON.stringify(updatedAssociates));
 
     toast({
       title: 'Success',
-      description: `Employee ${formData.name} (ID: ${formData.employeeId}) has been added successfully. Login credentials: ID and password are both "${formData.employeeId}"`
+      description: `Associate ${formData.name} (ID: ${formData.associateId}) has been added successfully. Login credentials: ID and password are both "${formData.associateId}"`
     });
 
-    setFormData({ name: '', employeeId: '', department: '', onboardingDate: '' });
+    setFormData({ name: '', associateId: '', department: '', onboardingDate: '' });
     setIsOpen(false);
-    onEmployeeAdded();
+    onAssociateAdded();
   };
 
   return (
@@ -84,13 +84,13 @@ export const AddEmployeeForm = ({ onEmployeeAdded }: AddEmployeeFormProps) => {
       <DialogTrigger asChild>
         <Button className="flex items-center gap-2">
           <UserPlus className="h-4 w-4" />
-          Add New Employee
+          Add New Associate
         </Button>
       </DialogTrigger>
       
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Employee</DialogTitle>
+          <DialogTitle>Add New Associate</DialogTitle>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -100,16 +100,16 @@ export const AddEmployeeForm = ({ onEmployeeAdded }: AddEmployeeFormProps) => {
               id="name"
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              placeholder="Enter employee's full name"
+              placeholder="Enter associate's full name"
             />
           </div>
           
             <div className="space-y-2">
-              <Label htmlFor="employeeId">Employee ID</Label>
+              <Label htmlFor="associateId">Associate ID</Label>
               <Input
-                id="employeeId"
-                value={formData.employeeId}
-                onChange={(e) => setFormData(prev => ({ ...prev, employeeId: e.target.value }))}
+                id="associateId"
+                value={formData.associateId}
+                onChange={(e) => setFormData(prev => ({ ...prev, associateId: e.target.value }))}
                 placeholder="e.g., EMP001, DEV123, etc."
               />
               <p className="text-xs text-muted-foreground">
@@ -148,7 +148,7 @@ export const AddEmployeeForm = ({ onEmployeeAdded }: AddEmployeeFormProps) => {
             <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit">Add Employee</Button>
+            <Button type="submit">Add Associate</Button>
           </div>
         </form>
       </DialogContent>

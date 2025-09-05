@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Bot, CheckCircle, XCircle, ArrowRight, Sparkles } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Employee } from '@/types/auth';
+import { Associate } from '@/types/auth';
 
 const mandatoryTasks = [
   {
@@ -38,7 +38,7 @@ interface OnboardingChatbotProps {
 
 export const OnboardingChatbot = ({ isOpen, onClose, onComplete }: OnboardingChatbotProps) => {
   const { user } = useAuth();
-  const currentEmployee = user as Employee;
+  const currentAssociate = user as Associate;
   
   const [currentStep, setCurrentStep] = useState<'welcome' | 'confirmation' | 'task' | 'waiting' | 'completed'>('welcome');
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
@@ -47,11 +47,11 @@ export const OnboardingChatbot = ({ isOpen, onClose, onComplete }: OnboardingCha
   const [responseType, setResponseType] = useState<'yes' | 'no' | null>(null);
 
   useEffect(() => {
-    if (isOpen && currentEmployee?.mandatoryTasksCompleted) {
+    if (isOpen && currentAssociate?.mandatoryTasksCompleted) {
       setCurrentStep('completed');
-    } else if (isOpen && currentEmployee) {
+    } else if (isOpen && currentAssociate) {
       // Load saved progress
-      const savedProgress = localStorage.getItem(`onboarding_${currentEmployee.id}`);
+      const savedProgress = localStorage.getItem(`onboarding_${currentAssociate.id}`);
       if (savedProgress) {
         const progress = JSON.parse(savedProgress);
         setCurrentStep(progress.currentStep);
@@ -59,7 +59,7 @@ export const OnboardingChatbot = ({ isOpen, onClose, onComplete }: OnboardingCha
         setCompletedTasks(progress.completedTasks);
       }
     }
-  }, [isOpen, currentEmployee]);
+  }, [isOpen, currentAssociate]);
 
   const handleWelcomeNext = () => {
     setCurrentStep('confirmation');
@@ -71,13 +71,13 @@ export const OnboardingChatbot = ({ isOpen, onClose, onComplete }: OnboardingCha
   };
 
   const saveProgress = () => {
-    if (currentEmployee) {
+    if (currentAssociate) {
       const progress = {
         currentStep,
         currentTaskIndex,
         completedTasks
       };
-      localStorage.setItem(`onboarding_${currentEmployee.id}`, JSON.stringify(progress));
+      localStorage.setItem(`onboarding_${currentAssociate.id}`, JSON.stringify(progress));
     }
   };
 
@@ -99,8 +99,8 @@ export const OnboardingChatbot = ({ isOpen, onClose, onComplete }: OnboardingCha
         } else {
           // All tasks completed
           setCurrentStep('completed');
-          updateEmployeeMandatoryStatus(true);
-          localStorage.removeItem(`onboarding_${currentEmployee?.id}`);
+          updateAssociateMandatoryStatus(true);
+          localStorage.removeItem(`onboarding_${currentAssociate?.id}`);
           onComplete();
         }
       }, 2000);
@@ -113,10 +113,10 @@ export const OnboardingChatbot = ({ isOpen, onClose, onComplete }: OnboardingCha
     }
   };
 
-  const updateEmployeeMandatoryStatus = (completed: boolean) => {
-    const employees = JSON.parse(localStorage.getItem('employees') || '[]');
-    const updatedEmployees = employees.map((emp: Employee) => {
-      if (emp.id === currentEmployee.id) {
+  const updateAssociateMandatoryStatus = (completed: boolean) => {
+    const associates = JSON.parse(localStorage.getItem('associates') || '[]');
+    const updatedAssociates = associates.map((emp: Associate) => {
+      if (emp.id === currentAssociate.id) {
         // Add tasks 1, 2, 3 (chatbot questions) to completed tasks
         const updatedTasks = [...new Set([...emp.completedTasks, 1, 2, 3])];
         return { 
@@ -127,12 +127,12 @@ export const OnboardingChatbot = ({ isOpen, onClose, onComplete }: OnboardingCha
       }
       return emp;
     });
-    localStorage.setItem('employees', JSON.stringify(updatedEmployees));
-
-    // Update current user in localStorage as well
-    const updatedCurrentEmployee = updatedEmployees.find(emp => emp.id === currentEmployee.id);
-    if (updatedCurrentEmployee) {
-      localStorage.setItem('currentUser', JSON.stringify(updatedCurrentEmployee));
+    localStorage.setItem('associates', JSON.stringify(updatedAssociates));
+    
+    // Update current user in localStorage
+    const updatedCurrentAssociate = updatedAssociates.find(emp => emp.id === currentAssociate.id);
+    if (updatedCurrentAssociate) {
+      localStorage.setItem('currentUser', JSON.stringify(updatedCurrentAssociate));
     }
   };
 
@@ -167,7 +167,7 @@ export const OnboardingChatbot = ({ isOpen, onClose, onComplete }: OnboardingCha
                   <span className="font-semibold text-primary">Welcome to GenC Tracker!</span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Hi {currentEmployee?.name}! 👋 I'm your onboarding assistant. I'm here to help you get started with some important setup tasks.
+                  Hi {currentAssociate?.name}! 👋 I'm your onboarding assistant. I'm here to help you get started with some important setup tasks.
                 </p>
                 <Button onClick={handleWelcomeNext} className="w-full">
                   Let's Get Started
