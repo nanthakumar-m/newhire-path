@@ -18,7 +18,7 @@ const Index = () => {
                 <Users className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-foreground">NewHire Path</h1>
+                <h1 className="text-xl font-semibold text-foreground">GenC Tracker</h1>
                 <p className="text-sm text-muted-foreground">Employee Onboarding Platform</p>
               </div>
             </div>

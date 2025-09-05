@@ -164,7 +164,7 @@ export const OnboardingChatbot = ({ isOpen, onClose, onComplete }: OnboardingCha
               <CardContent className="p-4 space-y-4">
                 <div className="flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-primary" />
-                  <span className="font-semibold text-primary">Welcome to NewHire Path!</span>
+                  <span className="font-semibold text-primary">Welcome to GenC Tracker!</span>
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Hi {currentEmployee?.name}! 👋 I'm your onboarding assistant. I'm here to help you get started with some important setup tasks.
