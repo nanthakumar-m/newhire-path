@@ -14,6 +14,7 @@ export interface Associate extends User {
   onboardingDate: string;
   completedTasks: number[];
   mandatoryTasksCompleted: boolean;
+  taskCompletionDates?: { [taskId: number]: { startDate?: string; endDate?: string } };
 }
 
 export interface Manager extends User {

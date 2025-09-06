@@ -48,7 +48,7 @@ export const AssociateDashboard = () => {
     }
   }, [currentAssociate]);
 
-  const handleToggleComplete = (taskId: number) => {
+  const handleToggleComplete = (taskId: number, dates?: { startDate: string; endDate: string }) => {
     const associates = JSON.parse(localStorage.getItem('associates') || '[]');
     
     // Find and update the current associate
@@ -58,8 +58,22 @@ export const AssociateDashboard = () => {
         const updatedTasks = isCompleting
           ? [...emp.completedTasks, taskId]
           : emp.completedTasks.filter(id => id !== taskId);
-          
-        const updatedAssociate = { ...emp, completedTasks: updatedTasks };
+        
+        let updatedTaskDates = { ...emp.taskCompletionDates };
+        
+        // Store dates for KT tasks if completing
+        if (isCompleting && dates && (taskId === 11 || taskId === 12)) {
+          updatedTaskDates = {
+            ...updatedTaskDates,
+            [taskId]: dates
+          };
+        }
+        
+        const updatedAssociate = { 
+          ...emp, 
+          completedTasks: updatedTasks,
+          taskCompletionDates: updatedTaskDates
+        };
         
         // Check if Reverse KT (task 12 now) is completed to show tickets
         if (updatedTasks.includes(12)) {
@@ -204,7 +218,7 @@ export const AssociateDashboard = () => {
               <div className="h-14 w-14 rounded-full bg-blue-500/10 mx-auto mb-4 flex items-center justify-between">
                 <BookOpen className="h-7 w-7 text-blue-600 dark:text-blue-400" />
               </div>
-              <p className="text-sm font-medium text-muted-foreground mb-1">Department</p>
+              <p className="text-sm font-medium text-muted-foreground mb-1">Service Line</p>
               <p className="text-xl font-bold text-foreground">{currentAssociate?.department}</p>
             </CardContent>
           </Card>

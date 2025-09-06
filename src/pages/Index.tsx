@@ -27,7 +27,9 @@ const Index = () => {
             <div className="flex items-center gap-4">
               <div className="text-right">
                 <p className="font-medium text-foreground">{user?.name}</p>
-                <p className="text-sm text-muted-foreground capitalize">{user?.type}</p>
+                <p className="text-sm text-muted-foreground capitalize">
+                  {user?.type === 'manager' ? 'Home Manager' : user?.type}
+                </p>
               </div>
               <Button
                 variant="outline"

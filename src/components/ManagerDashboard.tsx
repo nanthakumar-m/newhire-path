@@ -55,6 +55,13 @@ export const ManagerDashboard = () => {
     notStarted: 0,
   });
 
+  const tileDescriptions = {
+    total: "Total associates onboarded to Cargill",
+    onboarded: "Associates who completed their reverse KT and ready to work on tickets", 
+    inProgress: "Started but yet to complete mandatory tasks",
+    notStarted: "Onboarded but yet to start the tasks"
+  };
+
   useEffect(() => {
     loadAssociates();
   }, []);
@@ -130,87 +137,115 @@ export const ManagerDashboard = () => {
 
   return (
     <div className="space-y-8">
-      {/* Header Stats */}
+      {/* Header Stats with Flip Animation */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Associates</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-foreground">{associateStats.total}</div>
-                <p className="text-xs text-muted-foreground">Active in onboarding</p>
-              </div>
-              <AssociateListTable 
-                title="All Associates" 
-                associates={associates} 
-                type="total" 
-              />
+        <div className="flip-card h-32">
+          <div className="flip-card-inner">
+            <Card className="flip-card-front h-full">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Associates</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">{associateStats.total}</div>
+                    <p className="text-xs text-muted-foreground">Active in onboarding</p>
+                  </div>
+                  <AssociateListTable 
+                    title="All Associates" 
+                    associates={associates} 
+                    type="total" 
+                  />
+                </div>
+              </CardContent>
+            </Card>
+            <div className="flip-card-back bg-card border border-border">
+              <p className="text-sm text-center text-muted-foreground px-4">{tileDescriptions.total}</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Fully Onboarded</CardTitle>
-            <UserCheck className="h-4 w-4 text-success" />
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-success">{associateStats.onboarded}</div>
-                <p className="text-xs text-muted-foreground">Completed all tasks</p>
-              </div>
-              <AssociateListTable 
-                title="Fully Onboarded Associates" 
-                associates={associates.filter(emp => emp.completedTasks.includes(12))} 
-                type="onboarded" 
-              />
+        <div className="flip-card h-32">
+          <div className="flip-card-inner">
+            <Card className="flip-card-front h-full">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Fully Onboarded</CardTitle>
+                <UserCheck className="h-4 w-4 text-success" />
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-2xl font-bold text-success">{associateStats.onboarded}</div>
+                    <p className="text-xs text-muted-foreground">Completed all tasks</p>
+                  </div>
+                  <AssociateListTable 
+                    title="Fully Onboarded Associates" 
+                    associates={associates.filter(emp => emp.completedTasks.includes(12))} 
+                    type="onboarded" 
+                  />
+                </div>
+              </CardContent>
+            </Card>
+            <div className="flip-card-back bg-card border border-border">
+              <p className="text-sm text-center text-muted-foreground px-4">{tileDescriptions.onboarded}</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-            <Clock className="h-4 w-4 text-warning" />
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-warning">{associateStats.inProgress}</div>
-                <p className="text-xs text-muted-foreground">Active onboarding</p>
-              </div>
-              <AssociateListTable 
-                title="In Progress Associates" 
-                associates={associates.filter(emp => emp.completedTasks.length > 0 && !emp.completedTasks.includes(12))} 
-                type="in-progress" 
-              />
+        <div className="flip-card h-32">
+          <div className="flip-card-inner">
+            <Card className="flip-card-front h-full">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">In Progress</CardTitle>
+                <Clock className="h-4 w-4 text-warning" />
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-2xl font-bold text-warning">{associateStats.inProgress}</div>
+                    <p className="text-xs text-muted-foreground">Active onboarding</p>
+                  </div>
+                  <AssociateListTable 
+                    title="In Progress Associates" 
+                    associates={associates.filter(emp => emp.completedTasks.length > 0 && !emp.completedTasks.includes(12))} 
+                    type="in-progress" 
+                  />
+                </div>
+              </CardContent>
+            </Card>
+            <div className="flip-card-back bg-card border border-border">
+              <p className="text-sm text-center text-muted-foreground px-4">{tileDescriptions.inProgress}</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Not Started</CardTitle>
-            <AlertCircle className="h-4 w-4 text-destructive" />
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-destructive">{associateStats.notStarted}</div>
-                <p className="text-xs text-muted-foreground">Needs attention</p>
-              </div>
-              <AssociateListTable 
-                title="Not Started Associates" 
-                associates={associates.filter(emp => emp.completedTasks.length === 0)} 
-                type="not-started" 
-              />
+        <div className="flip-card h-32">
+          <div className="flip-card-inner">
+            <Card className="flip-card-front h-full">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Not Started</CardTitle>
+                <AlertCircle className="h-4 w-4 text-destructive" />
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-2xl font-bold text-destructive">{associateStats.notStarted}</div>
+                    <p className="text-xs text-muted-foreground">Needs attention</p>
+                  </div>
+                  <AssociateListTable 
+                    title="Not Started Associates" 
+                    associates={associates.filter(emp => emp.completedTasks.length === 0)} 
+                    type="not-started" 
+                  />
+                </div>
+              </CardContent>
+            </Card>
+            <div className="flip-card-back bg-card border border-border">
+              <p className="text-sm text-center text-muted-foreground px-4">{tileDescriptions.notStarted}</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Overall Progress */}

@@ -201,22 +201,22 @@ export const AddTicketForm = ({ onBack }: AddTicketFormProps) => {
           </div>
 
           {formData.ticketStatus === 'Resolved' && (
-            <div className="space-y-3">
-              <Label>SLA Met *</Label>
-              <RadioGroup 
-                value={formData.slaMet?.toString()} 
-                onValueChange={(value) => handleInputChange('slaMet', value === 'true')}
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="true" id="sla-met" />
-                  <Label htmlFor="sla-met">SLA Met</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="false" id="sla-not-met" />
-                  <Label htmlFor="sla-not-met">SLA Not Met</Label>
-                </div>
-              </RadioGroup>
-            </div>
+          <div className="space-y-3">
+            <Label>SLA</Label>
+            <RadioGroup 
+              value={formData.slaMet?.toString()} 
+              onValueChange={(value) => handleInputChange('slaMet', value === 'true')}
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="true" id="sla-met" />
+                <Label htmlFor="sla-met">Met</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="false" id="sla-not-met" />
+                <Label htmlFor="sla-not-met">Not Met</Label>
+              </div>
+            </RadioGroup>
+          </div>
           )}
 
           {((formData.ticketStatus === 'Resolved' && formData.slaMet === false) || formData.ticketStatus === 'Canceled') && (
@@ -260,7 +260,7 @@ export const AddTicketForm = ({ onBack }: AddTicketFormProps) => {
               <div><strong>Application Name:</strong> {formData.applicationName}</div>
               <div><strong>Ticket Status:</strong> {formData.ticketStatus}</div>
               {formData.ticketStatus === 'Resolved' && (
-                <div><strong>SLA Met:</strong> {formData.slaMet ? 'Yes' : 'No'}</div>
+                <div><strong>SLA:</strong> {formData.slaMet ? 'Met' : 'Not Met'}</div>
               )}
               {formData.reasonForDelay && (
                 <div><strong>Reason:</strong> {formData.reasonForDelay}</div>

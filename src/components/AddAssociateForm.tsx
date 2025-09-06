@@ -63,7 +63,8 @@ export const AddAssociateForm = ({ onAssociateAdded }: AddAssociateFormProps) =>
       department: formData.department,
       onboardingDate: formData.onboardingDate,
       completedTasks: [],
-      mandatoryTasksCompleted: false
+      mandatoryTasksCompleted: false,
+      taskCompletionDates: {}
     };
 
     const updatedAssociates = [...existingAssociates, newAssociate];
@@ -118,13 +119,13 @@ export const AddAssociateForm = ({ onAssociateAdded }: AddAssociateFormProps) =>
             </div>
           
           <div className="space-y-2">
-            <Label htmlFor="department">Department</Label>
+            <Label htmlFor="department">Service Line</Label>
             <Select 
               value={formData.department} 
               onValueChange={(value) => setFormData(prev => ({ ...prev, department: value }))}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select department" />
+                <SelectValue placeholder="Select service line" />
               </SelectTrigger>
               <SelectContent>
                 {departments.map(dept => (

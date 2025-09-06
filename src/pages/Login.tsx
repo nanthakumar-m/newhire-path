@@ -19,7 +19,7 @@ const Login = () => {
     if (!employeeId || !password) {
       toast({
         title: 'Error',
-        description: 'Please enter both Employee ID and password',
+        description: 'Please enter both Associate ID and password',
         variant: 'destructive'
       });
       return;
@@ -31,7 +31,7 @@ const Login = () => {
     if (!success) {
       toast({
         title: 'Login Failed',
-        description: 'Invalid credentials. Please check your Employee ID and password.',
+        description: 'Invalid credentials. Please check your Associate ID and password.',
         variant: 'destructive'
       });
     } else {
@@ -63,12 +63,12 @@ const Login = () => {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="employee-id" className="text-base font-medium">
-                  Employee ID
+                  Associate ID
                 </Label>
                 <Input
                   id="employee-id"
                   type="text"
-                  placeholder="Enter your Employee ID"
+                  placeholder="Enter your Associate ID"
                   value={employeeId}
                   onChange={(e) => setEmployeeId(e.target.value)}
                   className="h-12"

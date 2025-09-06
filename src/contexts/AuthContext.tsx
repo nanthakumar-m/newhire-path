@@ -24,31 +24,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           id: '1',
           name: 'Sarah Johnson',
           type: 'associate',
-          associateId: 'EMP001',
+          associateId: '239814',
           department: 'DE',
           onboardingDate: '2024-01-15',
           completedTasks: [],
-          mandatoryTasksCompleted: false
+          mandatoryTasksCompleted: false,
+          taskCompletionDates: {}
         },
         {
           id: '2',
           name: 'Mike Chen',
           type: 'associate',
-          associateId: 'EMP002',
+          associateId: '239825',
           department: 'SAP',
           onboardingDate: '2024-01-20',
           completedTasks: [],
-          mandatoryTasksCompleted: false
+          mandatoryTasksCompleted: false,
+          taskCompletionDates: {}
         },
         {
           id: '3',
           name: 'Emma Davis',
           type: 'associate',
-          associateId: 'EMP003',
+          associateId: '239836',
           department: 'IoT',
           onboardingDate: '2024-01-10',
           completedTasks: [],
-          mandatoryTasksCompleted: false
+          mandatoryTasksCompleted: false,
+          taskCompletionDates: {}
         }
       ];
       localStorage.setItem('associates', JSON.stringify(sampleAssociates));

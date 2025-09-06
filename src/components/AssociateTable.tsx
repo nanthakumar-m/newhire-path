@@ -77,9 +77,15 @@ export const AssociateTable = ({ taskTitle, taskId }: AssociateTableProps) => {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Associate ID</TableHead>
-              <TableHead>Department</TableHead>
+              <TableHead>Service Line</TableHead>
               <TableHead>Overall Progress</TableHead>
               <TableHead>Task Status</TableHead>
+              {(taskId === 11 || taskId === 12) && (
+                <>
+                  <TableHead>Start Date</TableHead>
+                  <TableHead>End Date</TableHead>
+                </>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -108,6 +114,28 @@ export const AssociateTable = ({ taskTitle, taskId }: AssociateTableProps) => {
                     )}
                   </div>
                 </TableCell>
+                {(taskId === 11 || taskId === 12) && (
+                  <>
+                    <TableCell>
+                      {associate.taskCompletionDates?.[taskId]?.startDate ? (
+                        <span className="text-sm">
+                          {new Date(associate.taskCompletionDates[taskId].startDate!).toLocaleDateString()}
+                        </span>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {associate.taskCompletionDates?.[taskId]?.endDate ? (
+                        <span className="text-sm">
+                          {new Date(associate.taskCompletionDates[taskId].endDate!).toLocaleDateString()}
+                        </span>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
+                  </>
+                )}
               </TableRow>
             ))}
           </TableBody>

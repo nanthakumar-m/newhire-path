@@ -49,7 +49,7 @@ export const AssociateListTable = ({ title, associates, type }: AssociateListTab
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Associate ID</TableHead>
-                  <TableHead>Department</TableHead>
+                  <TableHead>Service Line</TableHead>
                   <TableHead>Onboarding Date</TableHead>
                   <TableHead>Progress</TableHead>
                   <TableHead>Status</TableHead>
