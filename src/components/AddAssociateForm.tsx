@@ -111,7 +111,6 @@ export const AddAssociateForm = ({ onAssociateAdded }: AddAssociateFormProps) =>
                 id="associateId"
                 value={formData.associateId}
                 onChange={(e) => setFormData(prev => ({ ...prev, associateId: e.target.value }))}
-                placeholder="e.g., EMP001, DEV123, etc."
               />
               <p className="text-xs text-muted-foreground">
                 This will be used as both username and password for login
