@@ -16,13 +16,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Initialize with sample employees if none exist
+    // Initialize with sample employees if none exist - always refresh for testing
     const existingAssociates = localStorage.getItem('associates');
-    if (!existingAssociates) {
+    // Clear old data to ensure new format
+    localStorage.removeItem('associates');
+    if (true) {
       const sampleAssociates: Associate[] = [
         {
           id: '1',
-          name: 'Sarah Johnson',
+          name: 'Raguram',
           type: 'associate',
           associateId: '2398148',
           department: 'DE',
@@ -33,7 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
         {
           id: '2',
-          name: 'Mike Chen',
+          name: 'Hariharan',
           type: 'associate',
           associateId: '2397429',
           department: 'SAP',
@@ -44,7 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
         {
           id: '3',
-          name: 'Emma Davis',
+          name: 'Mohammed',
           type: 'associate',
           associateId: '2396573',
           department: 'IoT',
