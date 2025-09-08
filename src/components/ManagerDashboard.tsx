@@ -160,8 +160,18 @@ export const ManagerDashboard = () => {
                 </div>
               </CardContent>
             </Card>
-            <div className="flip-card-back bg-card border border-border">
-              <p className="text-sm text-center text-muted-foreground px-4">{tileDescriptions.total}</p>
+            <div className="flip-card-back bg-card border border-border h-full flex flex-col justify-between p-4">
+              <div>
+                <h3 className="font-semibold text-foreground mb-2">Total Associates</h3>
+                <p className="text-sm text-muted-foreground">{tileDescriptions.total}</p>
+              </div>
+              <div className="flex justify-end">
+                <AssociateListTable 
+                  title="All Associates" 
+                  associates={associates} 
+                  type="total" 
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -187,8 +197,18 @@ export const ManagerDashboard = () => {
                 </div>
               </CardContent>
             </Card>
-            <div className="flip-card-back bg-card border border-border">
-              <p className="text-sm text-center text-muted-foreground px-4">{tileDescriptions.onboarded}</p>
+            <div className="flip-card-back bg-card border border-border h-full flex flex-col justify-between p-4">
+              <div>
+                <h3 className="font-semibold text-success mb-2">Fully Onboarded</h3>
+                <p className="text-sm text-muted-foreground">{tileDescriptions.onboarded}</p>
+              </div>
+              <div className="flex justify-end">
+                <AssociateListTable 
+                  title="Fully Onboarded Associates" 
+                  associates={associates.filter(emp => emp.completedTasks.includes(12))} 
+                  type="onboarded" 
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -214,8 +234,18 @@ export const ManagerDashboard = () => {
                 </div>
               </CardContent>
             </Card>
-            <div className="flip-card-back bg-card border border-border">
-              <p className="text-sm text-center text-muted-foreground px-4">{tileDescriptions.inProgress}</p>
+            <div className="flip-card-back bg-card border border-border h-full flex flex-col justify-between p-4">
+              <div>
+                <h3 className="font-semibold text-warning mb-2">In Progress</h3>
+                <p className="text-sm text-muted-foreground">{tileDescriptions.inProgress}</p>
+              </div>
+              <div className="flex justify-end">
+                <AssociateListTable 
+                  title="In Progress Associates" 
+                  associates={associates.filter(emp => emp.completedTasks.length > 0 && !emp.completedTasks.includes(12))} 
+                  type="in-progress" 
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -241,8 +271,18 @@ export const ManagerDashboard = () => {
                 </div>
               </CardContent>
             </Card>
-            <div className="flip-card-back bg-card border border-border">
-              <p className="text-sm text-center text-muted-foreground px-4">{tileDescriptions.notStarted}</p>
+            <div className="flip-card-back bg-card border border-border h-full flex flex-col justify-between p-4">
+              <div>
+                <h3 className="font-semibold text-destructive mb-2">Not Started</h3>
+                <p className="text-sm text-muted-foreground">{tileDescriptions.notStarted}</p>
+              </div>
+              <div className="flex justify-end">
+                <AssociateListTable 
+                  title="Not Started Associates" 
+                  associates={associates.filter(emp => emp.completedTasks.length === 0)} 
+                  type="not-started" 
+                />
+              </div>
             </div>
           </div>
         </div>
